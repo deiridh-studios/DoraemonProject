@@ -9,15 +9,15 @@
 
 
 int main(int argc, char* argv[]) {
-	int exit = 0, i, x = 50, y = 50, x1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, spaceup = 0, buttona=0;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1=0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, spaceup = 0, createbullet2[20] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, pup = 0, buttona = 0;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	SDL_Rect srcrect, srcrect2[20], srcrectinit;
+	SDL_Rect srcrect, srcrect3, srcrect2[20], srcrect4[20], srcrectinit;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 	SDL_Event event;
-	SDL_Surface *surface, *surface2, *surface3, *surtitle01;
-	SDL_Texture *texture, *texture2, *texture3, *title01;
+	SDL_Surface *surface, *surface2, *surface3, *surface4, *surtitle01;
+	SDL_Texture *texture, *texture2, *texture3, *texture4, *title01;
 	IMG_Init(IMG_INIT_PNG);
 	Mix_Init(MIX_INIT_OGG);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1)
@@ -30,12 +30,17 @@ int main(int argc, char* argv[]) {
 	surface = IMG_Load("Assets/Background.png");
 	surface2 = IMG_Load("Assets/Doraemon.png");
 	surface3 = IMG_Load("Assets/Dorayaki.png");
+	surface4 = IMG_Load("Assets/Nobita.png");
 	surtitle01 = IMG_Load("Assets/Title01.png");
 	window = SDL_CreateWindow("Doraemon loving his Dorayakis", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
 	srcrect.x = 100;
 	srcrect.y = 100;
 	srcrect.w = 100;
 	srcrect.h = 100;
+	srcrect3.x = 100;
+	srcrect3.y = 200;
+	srcrect3.w = 100;
+	srcrect3.h = 100;
 	srcrectinit.w = 1280;
 	srcrectinit.h = 720;
 	srcrectinit.x = 0;
@@ -44,12 +49,17 @@ int main(int argc, char* argv[]) {
 		srcrect2[i].w = 40;
 		srcrect2[i].h = 40;
 	}
+	for (i = 0; i < 20; i++) {
+		srcrect4[i].w = 40;
+		srcrect4[i].h = 40;
+	}
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
 	texture3 = SDL_CreateTextureFromSurface(renderer, surface3);
+	texture4 = SDL_CreateTextureFromSurface(renderer, surface4);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
-	SDL_FreeSurface(surface,surface2,surface3, surtitle01);
+	SDL_FreeSurface(surface,surface2,surface3, surface4, surtitle01);
 	SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
 	SDL_RenderPresent(renderer);
 	while (exit == 0) {
@@ -67,13 +77,29 @@ int main(int argc, char* argv[]) {
 					xleft = 1;
 				if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT)
 					xright = 1;
+				if (event.key.keysym.scancode == SDL_SCANCODE_W)
+					yup1 = 1;
+				if (event.key.keysym.scancode == SDL_SCANCODE_S)
+					ydown1 = 1;
+				if (event.key.keysym.scancode == SDL_SCANCODE_D)
+					xright1 = 1;
 				if (event.key.keysym.scancode == SDL_SCANCODE_A)
-					buttona = 1;
+					if (buttona == 0)
+						buttona = 1;
+					else
+						xleft1 = 1;
 				for (i = 0; i < 20; i++) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_SPACE && createbullet[i] == 0 && spaceup == 0) {
 						Mix_PlayChannel(-1, spaceeffect, 0);
 						createbullet[i] = 1;
 						spaceup = 1;
+					}
+				}
+				for (i = 0; i < 20; i++) {
+					if (event.key.keysym.scancode == SDL_SCANCODE_P && createbullet2[i] == 0 && pup == 0) {
+						Mix_PlayChannel(-1, spaceeffect, 0);
+						createbullet2[i] = 1;
+						pup = 1;
 					}
 				}
 				if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
@@ -88,10 +114,19 @@ int main(int argc, char* argv[]) {
 					xleft = 0;
 				if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT)
 					xright = 0;
+				if (event.key.keysym.scancode == SDL_SCANCODE_W)
+					yup1 = 0;
+				if (event.key.keysym.scancode == SDL_SCANCODE_S)
+					ydown1 = 0;
+				if (event.key.keysym.scancode == SDL_SCANCODE_D)
+					xright1 = 0;
+				if (event.key.keysym.scancode == SDL_SCANCODE_A)
+					xleft1 = 0;
 				if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
 					spaceup = 0;
+				if (event.key.keysym.scancode == SDL_SCANCODE_P)
+					pup = 0;
 				break;
-			
 			}
 		}
 		if(buttona==1){
@@ -107,6 +142,18 @@ int main(int argc, char* argv[]) {
 				srcrect.x = srcrect.x + 5;
 			else if ((xleft == 1) && (srcrect.x > 0))
 				srcrect.x = srcrect.x - 5;
+			if (yup1 == 1 && ydown1 == 1)
+				srcrect3.y = srcrect3.y;
+			else if ((yup1 == 1) && (srcrect3.y > 0))
+				srcrect3.y = srcrect3.y - 5;
+			else if ((ydown1 == 1) && (srcrect3.y < 620))
+				srcrect3.y = srcrect3.y + 5;
+			if (xright1 == 1 && xleft1 == 1)
+				srcrect3.x = srcrect3.x;
+			else if ((xright1 == 1) && (srcrect3.x < 1180))
+				srcrect3.x = srcrect3.x + 5;
+			else if ((xleft1 == 1) && (srcrect3.x > 0))
+				srcrect3.x = srcrect3.x - 5;
 			for (i = 0; i < 20; i++) {
 				if (createbullet[i] == 1) {
 					srcrect2[i].x = srcrect.x + 40;
@@ -120,17 +167,36 @@ int main(int argc, char* argv[]) {
 					}
 				}
 			}
+			for (i = 0; i < 20; i++) {
+				if (createbullet2[i] == 1) {
+					srcrect4[i].x = srcrect3.x + 40;
+					srcrect4[i].y = srcrect3.y + 45;
+					createbullet2[i] = 2;
+				}
+				else if (createbullet2[i] == 2) {
+					srcrect4[i].x += 8;
+					if (srcrect4[i].x >= 1300) {
+						createbullet2[i] = 0;
+					}
+				}
+			}
 			SDL_RenderCopy(renderer, texture, NULL, NULL);
 			SDL_RenderCopy(renderer, texture2, NULL, &srcrect);
+			SDL_RenderCopy(renderer, texture4, NULL, &srcrect3);
 			for (i = 0; i < 20; i++) {
 				if (createbullet[i] > 0) {
 					SDL_RenderCopy(renderer, texture3, NULL, &srcrect2[i]);
 				}
 			}
+			for (i = 0; i < 20; i++) {
+				if (createbullet2[i] > 0) {
+					SDL_RenderCopy(renderer, texture3, NULL, &srcrect4[i]);
+				}
+			}
 			SDL_RenderPresent(renderer);
 		}
 	}
-	SDL_DestroyTexture(texture,texture2,texture3, title01);
+	SDL_DestroyTexture(texture,texture2,texture3, texture4, title01);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	Mix_FreeMusic(music);
