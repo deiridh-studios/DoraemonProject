@@ -34,8 +34,8 @@ int main(int argc, char* argv[]) {
 		720,
 		0
 	);
-	srcrect.x = 450;
-	srcrect.y = 250;
+	srcrect.x = 100;
+	srcrect.y = 100;
 	srcrect.w = 100;
 	srcrect.h = 100;
 	srcrectinit.w = 1280;
@@ -107,9 +107,9 @@ int main(int argc, char* argv[]) {
 					srcrect.y = srcrect.y;
 				else if ((yup == 1) && (srcrect.y > 0))
 					srcrect.y = srcrect.y - 5;
-				else if ((ydown == 1) && (srcrect.y < 450))
+				else if ((ydown == 1) && (srcrect.y < 620))
 					srcrect.y = srcrect.y + 5;
-				else if ((xright == 1) && (srcrect.x < 900))
+				else if ((xright == 1) && (srcrect.x < 1180))
 					srcrect.x = srcrect.x + 5;
 				else if ((xleft == 1) && (srcrect.x > 0))
 					srcrect.x = srcrect.x - 5;
