@@ -11,11 +11,11 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0 }, spaceup = 0, createbullet2[20] = { 0 }, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[31] = { 0 }, randx[31], randy[31], enough=0, futureenough=1, enemycount=0;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0 }, spaceup = 0, createbullet2[20] = { 0 }, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[31] = { 0 }, randx[31], randy[31], enough = 0, futureenough = 1, enemycount = 0, life=50, GameOver;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	SDL_Rect doraemonrect, dorayakirect[20], nobitarect,  nobitatearrect[20], examrect[31], srcrectinit;
+	SDL_Rect doraemonrect, dorayakirect[20], nobitarect,  nobitatearrect[20], examrect[31], srcrectinit, liferect;
 	SDL_Event event;
 	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surtitle01;
 	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *title01;
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
 	surtitle01 = IMG_Load("Assets/Title01.png");
 
 
-	window = SDL_CreateWindow("Nobita's hell", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
+	window = SDL_CreateWindow("Doraemon. The Real Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
 	doraemonrect.x = 100;
 	doraemonrect.y = 100;
 	doraemonrect.w = 100;
@@ -56,6 +56,11 @@ int main(int argc, char* argv[]) {
 	srcrectinit.h = 720;
 	srcrectinit.x = 0;
 	srcrectinit.y = 0;
+
+	liferect.x = 100;
+	liferect.y = 100;
+	liferect.w = 400;
+	liferect.h = 100;
 
 	for (i = 0; i < 20; i++) {
 		dorayakirect[i].w = 50;
@@ -78,7 +83,7 @@ int main(int argc, char* argv[]) {
 	texexam = SDL_CreateTextureFromSurface(renderer, surexam);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
 
-
+	GameOver:
 	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surexam, surtitle01);
 	SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 	SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
@@ -198,7 +203,11 @@ int main(int argc, char* argv[]) {
 				else if (createbullet[i] == 2) {
 					dorayakirect[i].x += 10;
 					dorayakirect[i].y += 1;
-
+					if ((dorayakirect[i].x >= nobitarect.x && dorayakirect[i].x <= nobitarect.x + 100) && (dorayakirect[i].y >= nobitarect.y && dorayakirect[i].y <= nobitarect.y + 100)) {
+						life = life - 10;
+						liferect.w -= 100;
+						createbullet[i] = 0;
+					}
 					if (dorayakirect[i].x >= 1300) {
 						createbullet[i] = 0;
 					}
@@ -212,16 +221,26 @@ int main(int argc, char* argv[]) {
 					createbullet2[i] = 2;
 				}
 				else if (createbullet2[i] == 2) {
-					if (nobitatearrect[i].x == nobitatearrect[i].x) {
-
-					}
 					nobitatearrect[i].y += -1;
 					nobitatearrect[i].x += 10;
+					if ((nobitatearrect[i].x >= doraemonrect.x && nobitatearrect[i].x <= doraemonrect.x + 100) && (nobitatearrect[i].y >= doraemonrect.y && nobitatearrect[i].y <= doraemonrect.y + 100)) {
+						life = life - 10;
+						liferect.w -= 100;
+					}
+					if ((dorayakirect[i].x >= nobitarect.x && dorayakirect[i].x <= nobitarect.x + 100) && (dorayakirect[i].y >= nobitarect.y && dorayakirect[i].y <= nobitarect.y + 100)) {
+						life = life - 10;
+						liferect.w -= 100;
+						createbullet2[i] = 0;
+					}
 					if (nobitatearrect[i].x >= 1300) {
 						createbullet2[i] = 0;
 					}
 				}
 			}
+
+
+
+
 
 			if (enough == 0) {
 				for (enough = 0; enough < futureenough; enough++) {
@@ -268,6 +287,7 @@ int main(int argc, char* argv[]) {
 			}
 
 			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+			SDL_RenderCopy(renderer, texdoraemon, NULL, &liferect);
 			SDL_RenderCopy(renderer, texdoraemon, NULL, &doraemonrect);
 		    SDL_RenderCopy(renderer, texnobita, NULL, &nobitarect);
 			SDL_RenderCopy(renderer, texexam, NULL, &examrect);
