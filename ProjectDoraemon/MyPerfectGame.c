@@ -11,19 +11,18 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1=0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0 }, spaceup = 0, createbullet2[20] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }, pup = 0, buttona = 0, randtear, randdorayaki;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0 }, spaceup = 0, createbullet2[20] = { 0 }, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[31] = { 0 }, randx[31], randy[31], enough=0, futureenough=1, enemycount=0;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	SDL_Rect srcrect, srcrect3, srcrect2[20], srcrect4[20], srcrectinit;
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+	SDL_Rect srcrect, srcrect3, srcrect2[20], srcrect4[20], srcrect5[31], srcrectinit;
 	SDL_Event event;
-	SDL_Surface *surface, *surface2, *surface3, *surface4, *surface5, *surtitle01;
-	SDL_Texture *texture, *texture2, *texture3, *texture4, *texture5, *title01;
+	SDL_Surface *surface, *surface2, *surface3, *surface4, *surface5, *surface6, *surtitle01;
+	SDL_Texture *texture, *texture2, *texture3, *texture4, *texture5, *texture6, *title01;
 	IMG_Init(IMG_INIT_PNG);
 	Mix_Init(MIX_INIT_OGG);
-	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1)
-		exit = 1;
+	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1);
+	//	exit = 1;
 	Mix_Chunk *spaceeffect;
 	spaceeffect = Mix_LoadWAV("Assets/SpaceEffect.wav");
 	Mix_Music *music;
@@ -34,8 +33,9 @@ int main(int argc, char* argv[]) {
 	surface3 = IMG_Load("Assets/Dorayaki.png");
 	surface4 = IMG_Load("Assets/Nobita.png");
 	surface5 = IMG_Load("Assets/NobitaTear.png");
+	surface6 = IMG_Load("Assets/enemy.png");
 	surtitle01 = IMG_Load("Assets/Title01.png");
-	window = SDL_CreateWindow("Doraemon loving his Dorayakis", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
+	window = SDL_CreateWindow("Nobita's hell", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
 	srcrect.x = 100;
 	srcrect.y = 100;
 	srcrect.w = 100;
@@ -56,52 +56,51 @@ int main(int argc, char* argv[]) {
 		srcrect4[i].w = 50;
 		srcrect4[i].h = 30;
 	}
+	for (i = 0; i < 31; i++) {
+		srcrect5[i].w = 100;
+		srcrect5[i].h = 70;
+	}
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
 	texture3 = SDL_CreateTextureFromSurface(renderer, surface3);
 	texture4 = SDL_CreateTextureFromSurface(renderer, surface4);
 	texture5 = SDL_CreateTextureFromSurface(renderer, surface5);
+	texture6 = SDL_CreateTextureFromSurface(renderer, surface6);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
 
 
-	//Title
-	SDL_FreeSurface(surface,surface2,surface3, surface4, surface5, surtitle01);
+	SDL_FreeSurface(surface,surface2,surface3, surface4, surface5, surface6, surtitle01);
 	SDL_RenderCopy(renderer, texture, NULL, NULL);
 	SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
 	SDL_RenderPresent(renderer);
 
 	while (exit == 0) {
-
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_QUIT:
 				exit = 1;
 				break;
 			case SDL_KEYDOWN:
-
-					if (event.key.keysym.scancode == SDL_SCANCODE_UP)
-						yup = 1;
-					if (event.key.keysym.scancode == SDL_SCANCODE_DOWN)
-						ydown = 1;
-					if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
-						xleft = 1;
-					if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT)
-						xright = 1;
-					if (event.key.keysym.scancode == SDL_SCANCODE_W)
-						yup1 = 1;
-					if (event.key.keysym.scancode == SDL_SCANCODE_S)
-						ydown1 = 1;
-					if (event.key.keysym.scancode == SDL_SCANCODE_D)
-						xright1 = 1;
-
-
+				if (event.key.keysym.scancode == SDL_SCANCODE_UP)
+					yup = 1;
+				if (event.key.keysym.scancode == SDL_SCANCODE_DOWN)
+					ydown = 1;
+				if (event.key.keysym.scancode == SDL_SCANCODE_LEFT)
+					xleft = 1;
+				if (event.key.keysym.scancode == SDL_SCANCODE_RIGHT)
+					xright = 1;
+				if (event.key.keysym.scancode == SDL_SCANCODE_W)
+					yup1 = 1;
+				if (event.key.keysym.scancode == SDL_SCANCODE_S)
+					ydown1 = 1;
+				if (event.key.keysym.scancode == SDL_SCANCODE_D)
+					xright1 = 1;
 				if (event.key.keysym.scancode == SDL_SCANCODE_A)
 					if (buttona == 0)
 						buttona = 1;
 					else
 						xleft1 = 1;
-
 				for (i = 0; i < 20; i++) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_P && createbullet[i] == 0 && spaceup == 0) {
 						if (buttona == 1) {
@@ -120,7 +119,6 @@ int main(int argc, char* argv[]) {
 						pup = 1;
 					}
 				}
-				
 				if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 					exit = 1;
 				break;
@@ -148,7 +146,6 @@ int main(int argc, char* argv[]) {
 				break;
 			}
 		}
-
 		if(buttona==1){
 			if (yup == 1 && ydown == 1)
 				srcrect.y = srcrect.y;
@@ -206,9 +203,53 @@ int main(int argc, char* argv[]) {
 				}
 			}
 
+			if (enough == 0) {
+				for (enough = 0; enough < futureenough; enough++) {
+					srcrect5[enemycount].x = 1300;
+					srcrect5[enemycount].y = rand() % 653;
+					createenemy[enemycount] = 1;
+					randx[enemycount] = (rand() % 5) + 1;
+					randy[enemycount] = (rand() % 10) + 1;
+					if (randy[enemycount] > 5) {
+						randy[enemycount] -= 5;
+						randy[enemycount] = 0 - randy[enemycount];
+					}
+					enemycount++;
+				}
+				if (futureenough < 16 && futureenough > 0)
+					futureenough *= 2;
+				else
+					futureenough = 0;
+			}
+			if(enough!=0){
+				for (i = 0; i < enough; i++) {
+					if (createenemy[i] == 1) {
+						srcrect5[i].x -= randx[i];
+						srcrect5[i].y += randy[i];
+						if (srcrect5[i].x <= -60) {
+							srcrect5[i].x = -60;
+							randx[i] = 0 - randx[i];
+						}
+						else if (srcrect5[i].x >= 1300) {
+							srcrect5[i].x = 1300;
+							randx[i] = 0 - randx[i];
+						}
+						if (srcrect5[i].y <= 0) {
+							srcrect5[i].y = 0;
+							randy[i] = 0 - randy[i];
+						}
+						else if (srcrect5[i].y >= 653) {
+							srcrect5[i].y =653;
+							randy[i] = 0 - randy[i];
+						}
+					}
+				}
+			}
+
 			SDL_RenderCopy(renderer, texture, NULL, NULL);
 			SDL_RenderCopy(renderer, texture2, NULL, &srcrect);
 		    SDL_RenderCopy(renderer, texture4, NULL, &srcrect3);
+			SDL_RenderCopy(renderer, texture6, NULL, &srcrect5);
 
 			for (i = 0; i < 20; i++) {
 				if (createbullet[i] > 0) {
