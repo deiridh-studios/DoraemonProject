@@ -15,10 +15,10 @@ int main(int argc, char* argv[]) {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	SDL_Rect doraemonrect, dorayakirect[20], nobitarect,  nobitatearrect[20], examrect[31], srcrectinit, liferect;
+	SDL_Rect doraemonrect, dorayakirect[20], nobitarect,  nobitatearrect[20], examrect[31], srcrectinit, liferect, lifeoutrect, gameoverrect;
 	SDL_Event event;
-	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surtitle01;
-	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *title01;
+	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surgameover;
+	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texgameover;
 	IMG_Init(IMG_INIT_PNG);
 	Mix_Init(MIX_INIT_OGG);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1);
@@ -30,6 +30,9 @@ int main(int argc, char* argv[]) {
 	Mix_PlayMusic(music, -1);
 
 	surbackground = IMG_Load("Assets/Background.png");
+	surlife = IMG_Load("Assets/LifeOut.png");
+	surlifein = IMG_Load("Assets/LifeIn.png");
+	surgameover = IMG_Load("Assets/GameOver.png");
 
 	surdoraemon = IMG_Load("Assets/Doraemon.png");
 	surdorayaki = IMG_Load("Assets/Dorayaki.png");
@@ -57,10 +60,15 @@ int main(int argc, char* argv[]) {
 	srcrectinit.x = 0;
 	srcrectinit.y = 0;
 
-	liferect.x = 100;
-	liferect.y = 100;
+	liferect.x = 420;
+	liferect.y = 12;
 	liferect.w = 400;
-	liferect.h = 100;
+	liferect.h = 40;
+
+	lifeoutrect.x = 0;
+	lifeoutrect.y = 0;
+	lifeoutrect.w = 1280;
+	lifeoutrect.h = 720;
 
 	for (i = 0; i < 20; i++) {
 		dorayakirect[i].w = 50;
@@ -80,13 +88,16 @@ int main(int argc, char* argv[]) {
 	texdorayaki = SDL_CreateTextureFromSurface(renderer, surdorayaki);
 	texnobita = SDL_CreateTextureFromSurface(renderer, surnobita);
 	texnobitatearrect = SDL_CreateTextureFromSurface(renderer, surnobitatearrect);
+	texlife = SDL_CreateTextureFromSurface(renderer, surlife);
+	texlifein = SDL_CreateTextureFromSurface(renderer, surlifein);
+	texgameover = SDL_CreateTextureFromSurface(renderer, surgameover);
 	texexam = SDL_CreateTextureFromSurface(renderer, surexam);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
 
 	GameOver:
-	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surexam, surtitle01);
+	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surexam, surtitle01, surgameover, surlifein, surlife);
 	SDL_RenderCopy(renderer, texbackground, NULL, NULL);
-	SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
+	//SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
 	SDL_RenderPresent(renderer);
 
 	while (exit == 0) {
@@ -193,7 +204,6 @@ int main(int argc, char* argv[]) {
 			else if ((xleft1 == 1) && (nobitarect.x > 0))
 				nobitarect.x = nobitarect.x - 5;
 
-
 			for (i = 0; i < 20; i++) {
 				if (createbullet[i] == 1) {
 					dorayakirect[i].x = doraemonrect.x + 80;
@@ -226,20 +236,14 @@ int main(int argc, char* argv[]) {
 					if ((nobitatearrect[i].x >= doraemonrect.x && nobitatearrect[i].x <= doraemonrect.x + 100) && (nobitatearrect[i].y >= doraemonrect.y && nobitatearrect[i].y <= doraemonrect.y + 100)) {
 						life = life - 10;
 						liferect.w -= 100;
-					}
-					if ((dorayakirect[i].x >= nobitarect.x && dorayakirect[i].x <= nobitarect.x + 100) && (dorayakirect[i].y >= nobitarect.y && dorayakirect[i].y <= nobitarect.y + 100)) {
-						life = life - 10;
-						liferect.w -= 100;
 						createbullet2[i] = 0;
 					}
+
 					if (nobitatearrect[i].x >= 1300) {
 						createbullet2[i] = 0;
 					}
 				}
 			}
-
-
-
 
 
 			if (enough == 0) {
@@ -286,11 +290,19 @@ int main(int argc, char* argv[]) {
 				}
 			}
 
-			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
-			SDL_RenderCopy(renderer, texdoraemon, NULL, &liferect);
-			SDL_RenderCopy(renderer, texdoraemon, NULL, &doraemonrect);
-		    SDL_RenderCopy(renderer, texnobita, NULL, &nobitarect);
-			SDL_RenderCopy(renderer, texexam, NULL, &examrect);
+			if (liferect.w == 0) {
+				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+				SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
+			}
+
+			if (liferect.w <= 1) {
+				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+				SDL_RenderCopy(renderer, texdoraemon, NULL, &doraemonrect);
+				SDL_RenderCopy(renderer, texnobita, NULL, &nobitarect);
+				SDL_RenderCopy(renderer, texexam, NULL, &examrect);
+				SDL_RenderCopy(renderer, texlifein, NULL, &liferect);
+				SDL_RenderCopy(renderer, texlife, NULL, &lifeoutrect);
+			}
 
 			for (i = 0; i < 20; i++) {
 				if (createbullet[i] > 0) {
