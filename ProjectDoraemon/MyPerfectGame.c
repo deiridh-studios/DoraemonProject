@@ -11,7 +11,7 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0 }, spaceup = 0, createbullet2[20] = { 0 }, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[31] = { 0 }, randx[31], randy[31], enough = 0, futureenough = 1, enemycount = 0, life=50, GameOver;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0 }, spaceup = 0, createbullet2[20] = { 0 }, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[31] = { 0 }, randx[31], randy[31], enough = 0, futureenough = 1, enemycount = 0, life = 50, GameOver, examcollision[16] = { 0 };
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 	surnobita = IMG_Load("Assets/Nobita.png");
 	surnobitatearrect = IMG_Load("Assets/NobitaTear.png");
 
-	surexam = IMG_Load("Assets/enemy.png");
+	surexam = IMG_Load("Assets/Exam.png");
 	surtitle01 = IMG_Load("Assets/Title01.png");
 
 
@@ -64,6 +64,11 @@ int main(int argc, char* argv[]) {
 	liferect.y = 12;
 	liferect.w = 400;
 	liferect.h = 40;
+
+	gameoverrect.x = 0;
+	gameoverrect.y = 0;
+	gameoverrect.w = 1280;
+	gameoverrect.h = 720;
 
 	lifeoutrect.x = 0;
 	lifeoutrect.y = 0;
@@ -94,14 +99,14 @@ int main(int argc, char* argv[]) {
 	texexam = SDL_CreateTextureFromSurface(renderer, surexam);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
 
-	GameOver:
+
 	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surexam, surtitle01, surgameover, surlifein, surlife);
+
 	SDL_RenderCopy(renderer, texbackground, NULL, NULL);
-	//SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
+	SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
 	SDL_RenderPresent(renderer);
 
 	while (exit == 0) {
-
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_QUIT:
@@ -131,8 +136,8 @@ int main(int argc, char* argv[]) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_P && createbullet[i] == 0 && spaceup == 0) {
 						if (buttona == 1) {
 							Mix_PlayChannel(-1, spaceeffect, 0);
+							createbullet[i] = 1;
 						}
-						createbullet[i] = 1;
 						spaceup = 1;
 					}
 				}
@@ -140,14 +145,15 @@ int main(int argc, char* argv[]) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_SPACE && createbullet2[i] == 0 && pup == 0) {
 						if (buttona == 1) {
 							Mix_PlayChannel(-1, spaceeffect, 0);
+							createbullet2[i] = 1;
 						}
-						createbullet2[i] = 1;
 						pup = 1;
 					}
 				}
 				if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 					exit = 1;
 				break;
+
 			case SDL_KEYUP:
 				if (event.key.keysym.scancode == SDL_SCANCODE_UP)
 					yup = 0;
@@ -175,7 +181,7 @@ int main(int argc, char* argv[]) {
 
 		///////////  If the player play A    ////////////
 
-		if(buttona==1){  
+		if(buttona == 1){  
 			//Doraemon moveset
 			if (yup == 1 && ydown == 1)
 				doraemonrect.y = doraemonrect.y;
@@ -287,6 +293,22 @@ int main(int argc, char* argv[]) {
 							randy[i] = 0 - randy[i];
 						}
 					}
+					for (int j = 0; j < 16; j++) {
+						if (examcollision[i] == 0) {
+							if (((examrect[i].x >= doraemonrect.x && examrect[i].x <= doraemonrect.x + 100) && (examrect[i].y >= doraemonrect.y && examrect[i].y <= doraemonrect.y + 100)) || ((examrect[i].x >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && (examrect[i].y >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))) {
+								life = life - 10;
+								liferect.w -= 50;
+								examcollision[i] = 1;
+							}
+						}
+						else if (examcollision[i] == 1){
+							if (((examrect[i].x < doraemonrect.x && examrect[i].x > doraemonrect.x + 100) && (examrect[i].y < doraemonrect.y && examrect[i].y > doraemonrect.y + 100)) || ((examrect[i].x < nobitarect.x && examrect[i].x > nobitarect.x + 100) && (examrect[i].y < nobitarect.y && examrect[i].y > nobitarect.y + 100))) {
+								life = life - 10;
+								liferect.w -= 50;
+								examcollision[i] = 0;
+							}
+						}
+					}
 				}
 			}
 
@@ -295,7 +317,7 @@ int main(int argc, char* argv[]) {
 				SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
 			}
 
-			if (liferect.w <= 1) {
+			if (liferect.w >= 1) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 				SDL_RenderCopy(renderer, texdoraemon, NULL, &doraemonrect);
 				SDL_RenderCopy(renderer, texnobita, NULL, &nobitarect);
@@ -315,6 +337,7 @@ int main(int argc, char* argv[]) {
 					SDL_RenderCopy(renderer, texnobitatearrect, NULL, &nobitatearrect[i]);
 				}
 			}
+
 
 			SDL_RenderPresent(renderer);
 		}
