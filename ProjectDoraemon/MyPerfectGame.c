@@ -11,7 +11,7 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, examcollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, life = 40, GameOver, enemies, xchange = 0, ychange = 0;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, examcollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, life = 40, GameOver, enemies=0, xchange = 0, ychange = 0;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -235,7 +235,7 @@ int main(int argc, char* argv[]) {
 						createenemy[j] = 0;
 						dorayakirect.x = 3000;
 						dorayakirect.y = 3000;
-						enough--;
+						//enough--;
 					}
 				}
 				if (dorayakirect.x >= 1300) {
@@ -272,6 +272,10 @@ int main(int argc, char* argv[]) {
 		
 
 			//Creation of enemies and their velocities
+			for (int i = 0; i < enemies; i++) {
+				if (createenemy[i] == 0)
+					enough--;
+			}
 			if (enough == 0) {
 				for (int j = 0; j < futureenough; j++) {
 					examrect[j].x = 1180;
@@ -290,7 +294,7 @@ int main(int argc, char* argv[]) {
 				else
 					futureenough = 0;
 			}
-
+			else enough = enemies;
 
 			if (enough != 0) {
 				for (i = 0; i < enemies; i++) {
