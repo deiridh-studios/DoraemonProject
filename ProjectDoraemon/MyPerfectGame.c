@@ -15,10 +15,10 @@ int main(int argc, char* argv[]) {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	SDL_Rect doraemonrect, dorayakirect, nobitarect,  nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect, bossrect;
+	SDL_Rect doraemonrect, lifeoutbossrect, lifeinbossrect, dorayakirect, nobitarect,  nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect, bossrect;
 	SDL_Event event;
-	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surboss, *surgameover;
-	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texboss, *texgameover;
+	SDL_Surface *surbackground, *surdoraemon, *surlifeoutboss, *surlifeinboss, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surboss, *surgameover;
+	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texlifeoutboss, *texlifeinboss, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texboss, *texgameover;
 	IMG_Init(IMG_INIT_PNG);
 	Mix_Init(MIX_INIT_OGG);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1);
@@ -34,8 +34,10 @@ int main(int argc, char* argv[]) {
 	surbackground = IMG_Load("Assets/Background.png");
 	surlife = IMG_Load("Assets/LifeOut.png");
 	surlifein = IMG_Load("Assets/LifeIn.png");
-	surboss = IMG_Load("Assets/Doraemon.png");
+	surboss = IMG_Load("Assets/boss1.png");
 	surgameover = IMG_Load("Assets/GameOver.png");
+	surlifeoutboss = IMG_Load("Assets/LifeOutBoss.png");
+	surlifeinboss = IMG_Load("Assets/LifeInBoss.png");
 
 	surdoraemon = IMG_Load("Assets/Doraemon.png");
 	surdorayaki = IMG_Load("Assets/Dorayaki.png");
@@ -60,6 +62,8 @@ int main(int argc, char* argv[]) {
 	texgameover = SDL_CreateTextureFromSurface(renderer, surgameover);
 	texboss = SDL_CreateTextureFromSurface(renderer, surboss);
 	texexam = SDL_CreateTextureFromSurface(renderer, surexam);
+	texlifeoutboss = SDL_CreateTextureFromSurface(renderer, surlifeoutboss);
+	texlifeinboss = SDL_CreateTextureFromSurface(renderer, surlifeinboss);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
 
 
@@ -85,6 +89,16 @@ int main(int argc, char* argv[]) {
 			liferect.y = 12;
 			liferect.w = 400;
 			liferect.h = 40;
+
+			lifeinbossrect.x = 230;
+			lifeinbossrect.y = 680;
+			lifeinbossrect.w = 820;
+			lifeinbossrect.h = 40;
+
+			lifeoutbossrect.x = 0;
+			lifeoutbossrect.y = 0;
+			lifeoutbossrect.w = 1280;
+			lifeoutbossrect.h = 720;
 
 			gameoverrect.x = 0;
 			gameoverrect.y = 0;
@@ -415,8 +429,8 @@ int main(int argc, char* argv[]) {
 				}*/
 			}
 
-			if (bosscreate >= 5) {
-				bossrect.x = bossrect.x - 50;
+			if ((bosscreate >= 5) && (bossrect.x >=1050)) {
+				bossrect.x = bossrect.x - 10;
 			}
 
 
@@ -444,7 +458,10 @@ int main(int argc, char* argv[]) {
 				}
 				if (bosscreate >= 5) {
 					SDL_RenderCopy(renderer, texboss, NULL, &bossrect);
+					SDL_RenderCopy(renderer, texlifeinboss, NULL, &lifeinbossrect);
+					SDL_RenderCopy(renderer, texlifeoutboss, NULL, &lifeoutbossrect);
 				}
+
 
 				SDL_RenderCopy(renderer, texlifein, NULL, &liferect);
 				SDL_RenderCopy(renderer, texlife, NULL, &lifeoutrect);
