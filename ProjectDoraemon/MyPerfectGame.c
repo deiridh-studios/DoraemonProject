@@ -11,7 +11,7 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0 }, spaceup = 0, createbullet2[20] = { 0 }, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[31] = { 0 }, randx[31], randy[31], enough = 0, futureenough = 1, enemycount = 0, life = 50, GameOver, examcollision[16] = { 0 };
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, createbullet[20] = { 0 }, spaceup = 0, createbullet2[20] = { 0 }, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[31] = { 0 }, randx[31], randy[31], enough = 0, futureenough = 1, enemycount = 0, life = 40, GameOver, examcollision=0;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -23,8 +23,9 @@ int main(int argc, char* argv[]) {
 	Mix_Init(MIX_INIT_OGG);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1);
 	//	exit = 1;
-	Mix_Chunk *spaceeffect;
+	Mix_Chunk *spaceeffect, *hitlife;
 	spaceeffect = Mix_LoadWAV("Assets/SpaceEffect.wav");
+	hitlife = Mix_LoadWAV("Assets/HitLifeEffect.wav");
 	Mix_Music *music;
 	music = Mix_LoadMUS("Assets/DoraemonBackground.ogg");
 	Mix_PlayMusic(music, -1);
@@ -102,6 +103,7 @@ int main(int argc, char* argv[]) {
 
 	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surexam, surtitle01, surgameover, surlifein, surlife);
 
+
 	SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 	SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
 	SDL_RenderPresent(renderer);
@@ -132,6 +134,7 @@ int main(int argc, char* argv[]) {
 						buttona = 1;
 					else
 						xleft1 = 1;
+
 				for (i = 0; i < 20; i++) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_P && createbullet[i] == 0 && spaceup == 0) {
 						if (buttona == 1) {
@@ -181,7 +184,7 @@ int main(int argc, char* argv[]) {
 
 		///////////  If the player play A    ////////////
 
-		if(buttona == 1){  
+		if (buttona == 1) {  
 			//Doraemon moveset
 			if (yup == 1 && ydown == 1)
 				doraemonrect.y = doraemonrect.y;
@@ -223,6 +226,7 @@ int main(int argc, char* argv[]) {
 						life = life - 10;
 						liferect.w -= 100;
 						createbullet[i] = 0;
+						Mix_PlayChannel(-1, hitlife, 0);
 					}
 					if (dorayakirect[i].x >= 1300) {
 						createbullet[i] = 0;
@@ -243,6 +247,7 @@ int main(int argc, char* argv[]) {
 						life = life - 10;
 						liferect.w -= 100;
 						createbullet2[i] = 0;
+						Mix_PlayChannel(-1, hitlife, 0);
 					}
 
 					if (nobitatearrect[i].x >= 1300) {
@@ -254,7 +259,7 @@ int main(int argc, char* argv[]) {
 
 			if (enough == 0) {
 				for (enough = 0; enough < futureenough; enough++) {
-					examrect[enemycount].x = 1300;
+					examrect[enemycount].x = 1280;
 					examrect[enemycount].y = rand() % 653;
 					createenemy[enemycount] = 1;
 					randx[enemycount] = (rand() % 5) + 1;
@@ -276,12 +281,12 @@ int main(int argc, char* argv[]) {
 					if (createenemy[i] == 1) {
 						examrect[i].x -= randx[i];
 						examrect[i].y += randy[i];
-						if (examrect[i].x <= -60) {
-							examrect[i].x = -60;
+						if (examrect[i].x <= 0) {
+							examrect[i].x = 0;
 							randx[i] = 0 - randx[i];
 						}
-						else if (examrect[i].x >= 1300) {
-							examrect[i].x = 1300;
+						else if (examrect[i].x >= 1280) {
+							examrect[i].x = 1280;
 							randx[i] = 0 - randx[i];
 						}
 						if (examrect[i].y <= 0) {
@@ -293,26 +298,25 @@ int main(int argc, char* argv[]) {
 							randy[i] = 0 - randy[i];
 						}
 					}
-					for (int j = 0; j < 16; j++) {
-						if (examcollision[i] == 0) {
-							if (((examrect[i].x >= doraemonrect.x && examrect[i].x <= doraemonrect.x + 100) && (examrect[i].y >= doraemonrect.y && examrect[i].y <= doraemonrect.y + 100)) || ((examrect[i].x >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && (examrect[i].y >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))) {
+
+					if (examcollision == 0) {
+							if ((((examrect[i].x >= doraemonrect.x && examrect[i].x <= doraemonrect.x + 100) && (examrect[i].y >= doraemonrect.y && examrect[i].y <= doraemonrect.y + 100))) || (((examrect[i].x >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && (examrect[i].y >= nobitarect.y && examrect[i].y <= nobitarect.y + 100)))) {
 								life = life - 10;
 								liferect.w -= 50;
-								examcollision[i] = 1;
+								examcollision = 1;
+								Mix_PlayChannel(-1, hitlife, 0);
 							}
-						}
-						else if (examcollision[i] == 1){
-							if (((examrect[i].x < doraemonrect.x && examrect[i].x > doraemonrect.x + 100) && (examrect[i].y < doraemonrect.y && examrect[i].y > doraemonrect.y + 100)) || ((examrect[i].x < nobitarect.x && examrect[i].x > nobitarect.x + 100) && (examrect[i].y < nobitarect.y && examrect[i].y > nobitarect.y + 100))) {
-								life = life - 10;
-								liferect.w -= 50;
-								examcollision[i] = 0;
-							}
-						}
 					}
+
+
+					else if ((((examrect[i].x < doraemonrect.x || examrect[i].x > doraemonrect.x + 100) && (examrect[i].y < doraemonrect.y || examrect[i].y > doraemonrect.y + 100))) && (((examrect[i].x < nobitarect.x || examrect[i].x > nobitarect.x + 100) && (examrect[i].y < nobitarect.y || examrect[i].y > nobitarect.y + 100)))) {
+						examcollision = 0;
+					}
+					
 				}
 			}
 
-			if (liferect.w == 0) {
+			if (life <= 0) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 				SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
 			}
@@ -346,6 +350,7 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	Mix_FreeMusic(music);
+	Mix_FreeChunk(hitlife);
 	Mix_FreeChunk(spaceeffect);
 	Mix_CloseAudio();
 
