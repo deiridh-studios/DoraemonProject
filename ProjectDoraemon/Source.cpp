@@ -11,14 +11,14 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, examcollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, life = 40, GameOver, enemies=0, xchange = 0, ychange = 0, firsttime=0;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, examcollision[16] = { 0 }, bosscreate=0, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, life = 40, GameOver, enemies=0, xchange = 0, ychange = 0, firsttime=0;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_Rect doraemonrect, dorayakirect, nobitarect,  nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect;
 	SDL_Event event;
-	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surgameover;
-	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texgameover;
+	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surgameover, *surboss;
+	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texgameover, *texboss;
 	IMG_Init(IMG_INIT_PNG);
 	Mix_Init(MIX_INIT_OGG);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1);
@@ -35,6 +35,7 @@ int main(int argc, char* argv[]) {
 	surlife = IMG_Load("Assets/LifeOut.png");
 	surlifein = IMG_Load("Assets/LifeIn.png");
 	surgameover = IMG_Load("Assets/GameOver.png");
+	surboss = IMG_Load("Assets/boss1.png");
 
 	surdoraemon = IMG_Load("Assets/Doraemon.png");
 	surdorayaki = IMG_Load("Assets/Dorayaki.png");
@@ -55,6 +56,7 @@ int main(int argc, char* argv[]) {
 	texnobitatearrect = SDL_CreateTextureFromSurface(renderer, surnobitatearrect);
 	texlife = SDL_CreateTextureFromSurface(renderer, surlife);
 	texlifein = SDL_CreateTextureFromSurface(renderer, surlifein);
+	texboss = SDL_CreateTextureFromSurface(renderer, surboss);
 	texgameover = SDL_CreateTextureFromSurface(renderer, surgameover);
 	texexam = SDL_CreateTextureFromSurface(renderer, surexam);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
@@ -72,6 +74,11 @@ int main(int argc, char* argv[]) {
 			nobitarect.y = 520;
 			nobitarect.w = 100;
 			nobitarect.h = 100;
+
+			bossrect.x = 1500;
+			bossrect.y = 260;
+			bossrect.w = 200;
+			bossrect.h = 200;
 
 			srcrectinit.w = 1280;
 			srcrectinit.h = 720;
@@ -299,6 +306,7 @@ int main(int argc, char* argv[]) {
 				}
 				enemies = enough = futureenough;
 				if (futureenough < 16)
+					bosscreate++;
 					futureenough *= 2;
 				else
 					futureenough = 0;
@@ -316,42 +324,6 @@ int main(int argc, char* argv[]) {
 							examrect[i].x = (rand() % 1180);
 							examrect[i].y = (rand() % 620);
 						}
-						/*if (((examrect[i].x + 100) >= doraemonrect.x)&&((examrect[i].x)+100<=(doraemonrect.x+100))) {
-							xchange = 1;
-						}
-						else if ((examrect[i].x  <= (doraemonrect.x+100)) && (examrect[i].x >= (doraemonrect.x))) {
-							xchange = -1;
-						}
-						if (((examrect[i].y + 100) >= doraemonrect.y) && ((examrect[i].y) + 100 <= (doraemonrect.y + 100))) {
-							ychange = 1;
-						}
-						else if ((examrect[i].y <= (doraemonrect.y + 100)) && (examrect[i].y >= (doraemonrect.y))) {
-							ychange = -1;
-						}
-						if (ychange != 0 && xchange != 0) {
-							if (ychange == 1) {
-								if (randy[i] > 0)
-									randy[i] = 0 - randy[i];
-								examrect[i].y += randy[i];
-							}
-							else {
-								if (randy[i] < 0)
-									randy[i] = 0 - randy[i];
-								examrect[i].y += randy[i];
-							}
-							if (xchange == 1) {
-								if (randx[i] > 0)
-									randx[i] = 0 - randx[i];
-								examrect[i].y += randx[i];
-							}
-							else {
-								if (randx[i] < 0)
-									randx[i] = 0 - randx[i];
-								examrect[i].y += randx[i];
-							}		
-						}
-						xchange = ychange = 0;*/
-
 
 						if (examrect[i].x <= 0) {
 							examrect[i].x = 0;
@@ -398,10 +370,6 @@ int main(int argc, char* argv[]) {
 					}*/
 				}
 
-
-				/*if ((examrect[i].x >= doraemonrect.x && examrect[i].x <= doraemonrect.x + 100) && (examrect[i].y >= doraemonrect.y && examrect[i].y <= doraemonrect.y + 100)) {
-
-				}*/
 			}
 			if (life <= 0) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
@@ -424,6 +392,9 @@ int main(int argc, char* argv[]) {
 						SDL_RenderFillRect(renderer, &examrect[i]);
 						SDL_RenderCopy(renderer, texexam, NULL, &examrect[i]);
 					}
+				}
+				//if (bosscreate >= 5) {
+					SDL_RenderCopy(renderer, texboss, NULL, &bossrect);
 				}
 				SDL_RenderCopy(renderer, texlifein, NULL, &liferect);
 				SDL_RenderCopy(renderer, texlife, NULL, &lifeoutrect);
