@@ -303,6 +303,10 @@ int main(int argc, char* argv[]) {
 						examrect[i].y += randy[i];
 
 						//Rebounce doraemon (later)
+						if ((((((examrect[i].x + 100) >= doraemonrect.x && examrect[i].x <= doraemonrect.x + 100) && ((examrect[i].y + 100) >= doraemonrect.y && examrect[i].y <= doraemonrect.y + 100))))) {
+							examrect[i].x = (rand() % 1180);
+							examrect[i].y = (rand() % 620);
+						}
 						/*if (((examrect[i].x + 100) >= doraemonrect.x)&&((examrect[i].x)+100<=(doraemonrect.x+100))) {
 							xchange = 1;
 						}
@@ -317,12 +321,12 @@ int main(int argc, char* argv[]) {
 						}
 						if (ychange != 0 && xchange != 0) {
 							if (ychange == 1) {
-								if (randy[i] < 0)
+								if (randy[i] > 0)
 									randy[i] = 0 - randy[i];
 								examrect[i].y += randy[i];
 							}
 							else {
-								if (randy[i] > 0)
+								if (randy[i] < 0)
 									randy[i] = 0 - randy[i];
 								examrect[i].y += randy[i];
 							}
