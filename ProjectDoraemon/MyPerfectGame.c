@@ -11,7 +11,7 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, bosscreate=0, examcollision[16] = { 0 }, chanclacollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, createenemy2[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, enough2 = 0, futureenough2 = 1, life = 40, lifeboss = 820, GameOver, enemies=0, enemies2=0, xchange = 0, ychange = 0, firsttime = 0;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, bosscreate=0, examcollision[16] = { 0 }, chanclacollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, createenemy2[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, enough2 = 0, futureenough2 = 1, life = 40, lifeboss = 820, GameOver, enemies=0, enemies2=0, xchange = 0, ychange = 0, firsttime = 0, bossmovey=0;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -474,17 +474,18 @@ int main(int argc, char* argv[]) {
 
 
 			//BOSS Apearing (the variable bosscreate show when the exams ended and when the boss has to appear)
-			if ((bosscreate >= 5) && (bossrect.x >=1050)) {
+			if ((bosscreate >= 5) && (bossrect.x >1050)) {
 				bossrect.x = bossrect.x - 10;
+				bossmovey = 15;
 			}
 			if ((bosscreate >= 5) && (bossrect.x <= 1050)) {
 				bossrect.x = 1050;
-				bossrect.y = bossrect.y - 10;
-				if (bossrect.y <= 100) {
-					bossrect.y = bossrect.y + 20;
+				bossrect.y = bossrect.y + bossmovey;
+				if (bossrect.y <= 0) {
+					bossmovey += 15;
 				}
 				if (bossrect.y >= 550) {
-					bossrect.y = bossrect.y - 20;
+					bossmovey -= 15;
 				}
 			}
 
