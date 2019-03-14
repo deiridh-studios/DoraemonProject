@@ -11,21 +11,22 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, bosscreate=0, examcollision[16] = { 0 }, chanclacollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, createenemy2[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, enough2 = 0, futureenough2 = 1, life = 40, lifeboss = 820, GameOver, enemies=0, enemies2=0, xchange = 0, ychange = 0, firsttime = 0, bossmovey=0;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, countout=0, ydown = 0, yup = 0, xright = 0, xleft = 0, bosscreate=0, examcollision[16] = { 0 }, chanclacollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, createenemy2[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, enough2 = 0, futureenough2 = 1, life = 40, lifeboss = 820, GameOver, enemies=0, enemies2=0, xchange = 0, ychange = 0, firsttime = 0, bossmovey=0;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	SDL_Rect chanclarect[8], doraemonrect, lifeoutbossrect, lifeinbossrect, dorayakirect, nobitarect,  nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect, bossrect;
+	SDL_Rect chanclarect[8], doraemonrect, lifeoutbossrect, lifeinbossrect, victoryrect, dorayakirect, nobitarect,  nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect, bossrect;
 	SDL_Event event;
-	SDL_Surface *surbackground, *surchancla, *surdoraemon, *surlifeoutboss, *surlifeinboss, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surboss, *surgameover;
-	SDL_Texture *texbackground, *texchancla, *texdoraemon, *texdorayaki, *texlifeoutboss, *texlifeinboss, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texboss, *texgameover;
+	SDL_Surface *surbackground, *surchancla, *surdoraemon, *surlifeoutboss, *survictory, *surlifeinboss, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surboss, *surgameover;
+	SDL_Texture *texbackground, *texchancla, *texdoraemon, *texdorayaki, *texlifeoutboss, *texvictory, *texlifeinboss, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texboss, *texgameover;
 	IMG_Init(IMG_INIT_PNG);
 	Mix_Init(MIX_INIT_OGG);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1);
 	//	exit = 1;
-	Mix_Chunk *spaceeffect, *hitlife, *gameov;
+	Mix_Chunk *spaceeffect, *hitlife, *gameov, *victory;
 	spaceeffect = Mix_LoadWAV("Assets/SpaceEffect.wav");
 	hitlife = Mix_LoadWAV("Assets/HitLifeEffect.wav");
+	victory = Mix_LoadWAV("Assets/victorysong.wav");
 	gameov = Mix_LoadWAV("Assets/defeatsound.wav");
 	Mix_Music *music;
 	music = Mix_LoadMUS("Assets/DoraemonBackground.ogg");
@@ -39,7 +40,7 @@ int main(int argc, char* argv[]) {
 	surgameover = IMG_Load("Assets/GameOver.png");
 	surlifeoutboss = IMG_Load("Assets/LifeOutBoss.png");
 	surlifeinboss = IMG_Load("Assets/LifeInBoss.png");
-
+	survictory = IMG_Load("Assets/VICTORYBO.png");
 	surdoraemon = IMG_Load("Assets/Doraemon.png");
 	surdorayaki = IMG_Load("Assets/Dorayaki.png");
 
@@ -64,12 +65,13 @@ int main(int argc, char* argv[]) {
 	texboss = SDL_CreateTextureFromSurface(renderer, surboss);
 	texexam = SDL_CreateTextureFromSurface(renderer, surexam);
 	texchancla = SDL_CreateTextureFromSurface(renderer, surchancla);
+	texvictory = SDL_CreateTextureFromSurface(renderer, survictory);
 	texlifeoutboss = SDL_CreateTextureFromSurface(renderer, surlifeoutboss);
 	texlifeinboss = SDL_CreateTextureFromSurface(renderer, surlifeinboss);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
 
 
-	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surchancla, surlifeoutboss, surlifeinboss, surexam, surtitle01, surgameover, surlifein, surlife, surboss);
+	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surchancla, survictory, surlifeoutboss, surlifeinboss, surexam, surtitle01, surgameover, surlifein, surlife, surboss);
 	while (exit == 0) {
 		if (buttona == 0) {
 			doraemonrect.x = 100;
@@ -216,7 +218,6 @@ int main(int argc, char* argv[]) {
 		}
 
 		///////////  If the player play A    ////////////
-
 		if (buttona == 1) {
 			//Doraemon moveset
 			if (yup == 1 && ydown == 1)
@@ -316,7 +317,13 @@ int main(int argc, char* argv[]) {
 						nobitatearrect.y = 3000;
 					}
 				}
-
+				if (bosscreate >= 5) {
+					if (((nobitatearrect.x) + 50 >= bossrect.x && nobitatearrect.x <= bossrect.x + 150) && ((nobitatearrect.y) + 50 >= bossrect.y && nobitatearrect.y <= bossrect.y + 150)) {
+						lifeboss = lifeboss - 50;
+						lifeinbossrect.w -= 50;
+						createbullet2 = 0;
+					}
+				}
 				if (nobitatearrect.x >= 1300) {
 					createbullet2 = 0;
 				}
@@ -491,14 +498,16 @@ int main(int argc, char* argv[]) {
 
 
 			if (life <= 0) {
-				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
-				SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
-				Mix_HaltMusic();
-				Mix_PlayChannel(-1, gameov, 0);
 				buttona = 0;
+				countout++;
 			}
 
-			if (liferect.w >= 1) {
+			if (lifeboss <= 0) {
+				buttona = 0;
+				countout++;
+			}
+
+			if ((liferect.w >= 1)&&(lifeinbossrect.w >=1)) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 				SDL_RenderFillRect(renderer, &doraemonrect);
@@ -530,24 +539,37 @@ int main(int argc, char* argv[]) {
 				SDL_RenderCopy(renderer, texlife, NULL, &lifeoutrect);
 			}
 
-				if (createbullet > 0) {
+
+
+			if (createbullet > 0) {
 					SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 					SDL_RenderFillRect(renderer, &dorayakirect);
 					SDL_RenderCopy(renderer, texdorayaki, NULL, &dorayakirect);
-				}
+			}
 
-				if (createbullet2 > 0) {
+			if (createbullet2 > 0) {
 					SDL_RenderCopy(renderer, texnobitatearrect, NULL, &nobitatearrect);
-				}
+			}
+
 			SDL_RenderPresent(renderer);
-			
+		}
+
+		if ((lifeboss <= 0) && (countout >=1) && (buttona== 0)) {
+			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+			SDL_RenderCopy(renderer, texvictory, NULL, &victoryrect);
+			Mix_HaltMusic();
+			Mix_PlayChannel(-1, victory, 0);
+			buttona = 0;
+		}
+
+		if ((life <= 0) && (countout >= 1 && (buttona == 0))) {
+			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+			SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
+			Mix_HaltMusic();
+			Mix_PlayChannel(-1, gameov, 0);
+			countout++;
 		}
 	}
-
-
-
-
-
 
 	SDL_DestroyTexture(texbackground, texdoraemon, texdorayaki, texnobita, title01, texexam, texgameover, texlife, texlifein, texnobitatearrect);
 	SDL_DestroyRenderer(renderer);
