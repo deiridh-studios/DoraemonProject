@@ -11,11 +11,11 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, examcollision=0, createbullet[20] = { 0 }, spaceup = 0, createbullet2[20] = { 0 }, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, life = 40, GameOver;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, examcollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, life = 40, GameOver, enemies=0, xchange = 0, ychange = 0;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	SDL_Rect doraemonrect, dorayakirect[20], nobitarect,  nobitatearrect[20], examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect;
+	SDL_Rect doraemonrect, dorayakirect, nobitarect,  nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect;
 	SDL_Event event;
 	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surgameover;
 	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texgameover;
@@ -75,15 +75,13 @@ int main(int argc, char* argv[]) {
 	lifeoutrect.y = 0;
 	lifeoutrect.w = 1280;
 	lifeoutrect.h = 720;
+	
+	dorayakirect.w = 50;
+	dorayakirect.h = 50;
 
-	for (i = 0; i < 20; i++) {
-		dorayakirect[i].w = 50;
-		dorayakirect[i].h = 50;
-	}
-	for (i = 0; i < 20; i++) {
-		nobitatearrect[i].w = 40;
-		nobitatearrect[i].h = 30;
-	}
+	nobitatearrect.w = 40;
+	nobitatearrect.h = 30;
+	
 	for (i = 0; i < 16; i++) {
 		examrect[i].w = 100;
 		examrect[i].h = 100;
@@ -138,19 +136,19 @@ int main(int argc, char* argv[]) {
 					}
 
 				for (i = 0; i < 20; i++) {
-					if (event.key.keysym.scancode == SDL_SCANCODE_P && createbullet[i] == 0 && spaceup == 0) {
+					if (event.key.keysym.scancode == SDL_SCANCODE_P && createbullet == 0 && spaceup == 0) {
 						if (buttona == 1) {
 							Mix_PlayChannel(-1, spaceeffect, 0);
-							createbullet[i] = 1;
+							createbullet = 1;
 						}
 						spaceup = 1;
 					}
 				}
 				for (i = 0; i < 20; i++) {
-					if (event.key.keysym.scancode == SDL_SCANCODE_SPACE && createbullet2[i] == 0 && pup == 0) {
+					if (event.key.keysym.scancode == SDL_SCANCODE_SPACE && createbullet2 == 0 && pup == 0) {
 						if (buttona == 1) {
 							Mix_PlayChannel(-1, spaceeffect, 0);
-							createbullet2[i] = 1;
+							createbullet2 = 1;
 						}
 						pup = 1;
 					}
@@ -216,75 +214,132 @@ int main(int argc, char* argv[]) {
 				nobitarect.x = nobitarect.x - 5;
 
 			//Creation and collider of Dorayakis
-			for (i = 0; i < 20; i++) {
-				if (createbullet[i] == 1) {
-					dorayakirect[i].x = doraemonrect.x + 80;
-					dorayakirect[i].y = doraemonrect.y + 45;
-					createbullet[i] = 2;
+			if (createbullet == 1) {
+				dorayakirect.x = doraemonrect.x + 80;
+				dorayakirect.y = doraemonrect.y + 45;
+				createbullet = 2;
+			}
+			else if (createbullet == 2) {
+				dorayakirect.x += 10;
+				dorayakirect.y += 1;
+				if (((dorayakirect.x+50) >= nobitarect.x && dorayakirect.x <= nobitarect.x + 100) && ((dorayakirect.y+50) >= nobitarect.y && dorayakirect.y <= nobitarect.y + 100)) {
+					life = life - 10;
+					liferect.w -= 100;
+					createbullet = 0;
+					Mix_PlayChannel(-1, hitlife, 0);
 				}
-				else if (createbullet[i] == 2) {
-					dorayakirect[i].x += 10;
-					dorayakirect[i].y += 1;
-					if ((dorayakirect[i].x >= nobitarect.x && dorayakirect[i].x <= nobitarect.x + 100) && (dorayakirect[i].y >= nobitarect.y && dorayakirect[i].y <= nobitarect.y + 100)) {
-						life = life - 10;
-						liferect.w -= 100;
-						createbullet[i] = 0;
-						Mix_PlayChannel(-1, hitlife, 0);
+				for(int j=0;j<enemies;j++){
+					if (((((((dorayakirect.x + 50) >= examrect[j].x && dorayakirect.x <= examrect[j].x + 100) && ((dorayakirect.y + 50) >= examrect[j].y && dorayakirect.y <= examrect[j].y + 100)))))&&enough>0) {
+						examrect[j].x = 3000;
+						examrect[j].y = 3000;
+						createenemy[j] = 0;
+						dorayakirect.x = 3000;
+						dorayakirect.y = 3000;
+						//enough--;
 					}
-					if (dorayakirect[i].x >= 1300) {
-						createbullet[i] = 0;
-					}
+				}
+				if (dorayakirect.x >= 1300) {
+					dorayakirect.x = 3000;
+					createbullet = 0;
 				}
 			}
 
 			//Creation and collider of Nobita's Tears
-			for (i = 0; i < 20; i++) {
-				if (createbullet2[i] == 1) {
-					nobitatearrect[i].x = nobitarect.x + 90;
-					nobitatearrect[i].y = nobitarect.y + 35;
-					createbullet2[i] = 2;
+			if (createbullet2 == 1) {
+				nobitatearrect.x = nobitarect.x + 90;
+				nobitatearrect.y = nobitarect.y + 35;
+				createbullet2 = 2;
+			}
+			else if (createbullet2 == 2) {
+				nobitatearrect.y += -1;
+				nobitatearrect.x += 10;
+				if (((nobitatearrect.x)+40 >= doraemonrect.x && nobitatearrect.x <= doraemonrect.x + 100) && ((nobitatearrect.y)+30 >= doraemonrect.y && nobitatearrect.y <= doraemonrect.y + 100)) {
+					life = life - 10;
+					liferect.w -= 100;
+					createbullet2 = 0;
+					Mix_PlayChannel(-1, hitlife, 0);
 				}
-				else if (createbullet2[i] == 2) {
-					nobitatearrect[i].y += -1;
-					nobitatearrect[i].x += 10;
-					if ((nobitatearrect[i].x >= doraemonrect.x && nobitatearrect[i].x <= doraemonrect.x + 100) && (nobitatearrect[i].y >= doraemonrect.y && nobitatearrect[i].y <= doraemonrect.y + 100)) {
-						life = life - 10;
-						liferect.w -= 100;
-						createbullet2[i] = 0;
-						Mix_PlayChannel(-1, hitlife, 0);
+				for (int j = 0; j < enemies; j++) {
+					if ((((((nobitatearrect.x + 40) >= examrect[j].x && nobitatearrect.x <= examrect[j].x + 100) && ((nobitatearrect.y + 30) >= examrect[j].y && nobitatearrect.y <= examrect[j].y + 100))))) {
+						nobitatearrect.x = 3000;
+						nobitatearrect.y = 3000;
 					}
-
-					if (nobitatearrect[i].x >= 1300) {
-						createbullet2[i] = 0;
-					}
+				}
+				if (nobitatearrect.x >= 1300) {
+					createbullet2 = 0;
 				}
 			}
+		
 
-
+			//Creation of enemies and their velocities
+			for (int i = 0; i < enemies; i++) {
+				if (createenemy[i] == 0)
+					enough--;
+			}
 			if (enough == 0) {
-				for (enough = 0; enough < futureenough; enough++) {
-					examrect[enough].x = 1180;
-					examrect[enough].y = rand() % 653;
-					createenemy[enough] = 1;
-					randx[enough] = (rand() % 5) + 1;
-					randy[enough] = (rand() % 10) + 1;
-					if (randy[enough] > 5) {
-						randy[enough] -= 5;
-						randy[enough] = 0 - randy[enough];
+				for (int j = 0; j < futureenough; j++) {
+					examrect[j].x = 1180;
+					examrect[j].y = rand() % 653;
+					createenemy[j] = 1;
+					randx[j] = (rand() % 5) + 1;
+					randy[j] = (rand() % 10) + 1;
+					if (randy[j] > 5) {
+						randy[j] -= 5;
+						randy[j] = 0 - randy[j];
 					}
 				}
-				if (futureenough < 16 && futureenough > 0)
+				enemies = enough = futureenough;
+				if (futureenough < 16)
 					futureenough *= 2;
 				else
 					futureenough = 0;
 			}
-
+			else enough = enemies;
 
 			if (enough != 0) {
-				for (i = 0; i < enough; i++) {
+				for (i = 0; i < enemies; i++) {
 					if (createenemy[i] == 1) {
 						examrect[i].x -= randx[i];
 						examrect[i].y += randy[i];
+
+						//Rebounce doraemon (later)
+						/*if (((examrect[i].x + 100) >= doraemonrect.x)&&((examrect[i].x)+100<=(doraemonrect.x+100))) {
+							xchange = 1;
+						}
+						else if ((examrect[i].x  <= (doraemonrect.x+100)) && (examrect[i].x >= (doraemonrect.x))) {
+							xchange = -1;
+						}
+						if (((examrect[i].y + 100) >= doraemonrect.y) && ((examrect[i].y) + 100 <= (doraemonrect.y + 100))) {
+							ychange = 1;
+						}
+						else if ((examrect[i].y <= (doraemonrect.y + 100)) && (examrect[i].y >= (doraemonrect.y))) {
+							ychange = -1;
+						}
+						if (ychange != 0 && xchange != 0) {
+							if (ychange == 1) {
+								if (randy[i] < 0)
+									randy[i] = 0 - randy[i];
+								examrect[i].y += randy[i];
+							}
+							else {
+								if (randy[i] > 0)
+									randy[i] = 0 - randy[i];
+								examrect[i].y += randy[i];
+							}
+							if (xchange == 1) {
+								if (randx[i] > 0)
+									randx[i] = 0 - randx[i];
+								examrect[i].y += randx[i];
+							}
+							else {
+								if (randx[i] < 0)
+									randx[i] = 0 - randx[i];
+								examrect[i].y += randx[i];
+							}		
+						}
+						xchange = ychange = 0;*/
+
+
 						if (examrect[i].x <= 0) {
 							examrect[i].x = 0;
 							randx[i] = 0 - randx[i];
@@ -302,65 +357,77 @@ int main(int argc, char* argv[]) {
 							randy[i] = 0 - randy[i];
 						}
 					}
-
-					if (examcollision == 0) {
-						if (((((examrect[i].x >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && (examrect[i].y >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))))) {
-							life = life - 5;
-							liferect.w -= 50;
-							examcollision = 1;
-							Mix_PlayChannel(-1, hitlife, 0);
-						}
+					else if (createenemy == 0) {
+						examrect[i].x = 2000;
+						examrect[i].y = 2000;
 					}
 
-					if (((((dorayakirect[i].x >= examrect[i].x && dorayakirect[i].x <= examrect[i].x + 100) && (dorayakirect[i].y >= examrect[i].y && dorayakirect[i].y <= examrect[i].y + 100))) || ((((nobitatearrect[i].x >= examrect[i].x && nobitatearrect[i].x <= examrect[i].x + 100) && (nobitatearrect[i].y >= examrect[i].y && nobitatearrect[i].y <= examrect[i].y + 100)))))) {
+					//Collision exam with Nobita
+						if ((((((examrect[i].x+100) >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && ((examrect[i].y+100) >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))))) {
+							if (examcollision[i] == 0) {
+								life = life - 5;
+								liferect.w -= 50;
+								examcollision[i] = 1;
+								Mix_PlayChannel(-1, hitlife, 0);
+							}
+						}	
+						else examcollision[i] = 0;
+					//}
+					
+				/*	if ((((((dorayakirect[i].x+50) >= examrect[i].x && dorayakirect[i].x <= examrect[i].x + 100) && ((dorayakirect[i].y+50) >= examrect[i].y && dorayakirect[i].y <= examrect[i].y + 100))) || ((((nobitatearrect[i].x >= examrect[i].x && nobitatearrect[i].x <= examrect[i].x + 100) && (nobitatearrect[i].y >= examrect[i].y && nobitatearrect[i].y <= examrect[i].y + 100)))))) {
 						examrect[i].x = 3000;
 						examrect[i].y = 3000;
+						buttona = 0;
+						createenemy[i] = 0;
 						dorayakirect[i].x = 3000;
 						dorayakirect[i].y = 3000;
 						enough--;
-					}
+					}*/
 				}
 
 
-				if ((examrect[i].x >= doraemonrect.x && examrect[i].x <= doraemonrect.x + 100) && (examrect[i].y >= doraemonrect.y && examrect[i].y <= doraemonrect.y + 100)) {
+				/*if ((examrect[i].x >= doraemonrect.x && examrect[i].x <= doraemonrect.x + 100) && (examrect[i].y >= doraemonrect.y && examrect[i].y <= doraemonrect.y + 100)) {
 
-				}
+				}*/
+			}
+			if (life <= 0) {
+				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+				SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
+				buttona = 0;
+			}
 
-				if (life <= 0) {
-					SDL_RenderCopy(renderer, texbackground, NULL, NULL);
-					SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
-					buttona = 0;
-				}
-
-				if (liferect.w >= 1) {
-					SDL_RenderCopy(renderer, texbackground, NULL, NULL);
-					SDL_RenderCopy(renderer, texdoraemon, NULL, &doraemonrect);
-					SDL_RenderCopy(renderer, texnobita, NULL, &nobitarect);
-					for (i = 0; i < enough; i++) {
+			if (liferect.w >= 1) {
+				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+				SDL_RenderFillRect(renderer, &doraemonrect);
+				SDL_RenderCopy(renderer, texdoraemon, NULL, &doraemonrect);
+				SDL_RenderFillRect(renderer, &nobitarect);
+				SDL_RenderCopy(renderer, texnobita, NULL, &nobitarect);
+				for (i = 0; i < enemies; i++) {
+					if (createenemy != 0) {
+						SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+						SDL_RenderFillRect(renderer, &examrect[i]);
 						SDL_RenderCopy(renderer, texexam, NULL, &examrect[i]);
 					}
-					SDL_RenderCopy(renderer, texlifein, NULL, &liferect);
-					SDL_RenderCopy(renderer, texlife, NULL, &lifeoutrect);
 				}
-
-				for (i = 0; i < 20; i++) {
-					if (createbullet[i] > 0) {
-						SDL_RenderCopy(renderer, texdorayaki, NULL, &dorayakirect[i]);
-					}
-				}
-
-				for (i = 0; i < 20; i++) {
-					if (createbullet2[i] > 0) {
-						SDL_RenderCopy(renderer, texnobitatearrect, NULL, &nobitatearrect[i]);
-					}
-				}
-
-
-				SDL_RenderPresent(renderer);
+				SDL_RenderCopy(renderer, texlifein, NULL, &liferect);
+				SDL_RenderCopy(renderer, texlife, NULL, &lifeoutrect);
 			}
+
+				if (createbullet > 0) {
+					SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+					SDL_RenderFillRect(renderer, &dorayakirect);
+					SDL_RenderCopy(renderer, texdorayaki, NULL, &dorayakirect);
+				}
+
+				if (createbullet2 > 0) {
+					SDL_RenderCopy(renderer, texnobitatearrect, NULL, &nobitatearrect);
+				}
+			SDL_RenderPresent(renderer);
+			
 		}
 	}
-	SDL_DestroyTexture(texbackground, texdoraemon, texdorayaki, texnobita, title01);
+	SDL_DestroyTexture(texbackground, texdoraemon, texdorayaki, texnobita, title01, texexam, texgameover, texlife, texlifein, texnobitatearrect);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	Mix_FreeMusic(music);
