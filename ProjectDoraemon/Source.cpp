@@ -11,14 +11,14 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, examcollision[16] = { 0 }, bosscreate=0, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, life = 40, GameOver, enemies=0, xchange = 0, ychange = 0, firsttime=0;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, bosscreate = 0, examcollision[16] = { 0 }, chanclacollision[5] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 = 0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, createenemy2[5] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, enough2 = 0, futureenough2 = 1, life = 40, lifeboss = 820, GameOver, enemies = 0, enemies2 = 0, xchange = 0, ychange = 0, firsttime = 0, bossmovey = 0, bossround = 1, createchancla[5] = { 0 }, randx2[5] = { 0 }, randy2[5] = { 0 };
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	SDL_Rect doraemonrect, dorayakirect, nobitarect,  nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect;
+	SDL_Rect chanclarect[5], doraemonrect, lifeoutbossrect, lifeinbossrect, dorayakirect, nobitarect, nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect, bossrect;
 	SDL_Event event;
-	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surgameover, *surboss;
-	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texgameover, *texboss;
+	SDL_Surface *surbackground, *surchancla, *surdoraemon, *surlifeoutboss, *surlifeinboss, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surboss, *surgameover;
+	SDL_Texture *texbackground, *texchancla, *texdoraemon, *texdorayaki, *texlifeoutboss, *texlifeinboss, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texboss, *texgameover;
 	IMG_Init(IMG_INIT_PNG);
 	Mix_Init(MIX_INIT_OGG);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1);
@@ -33,9 +33,12 @@ int main(int argc, char* argv[]) {
 
 	surbackground = IMG_Load("Assets/Background.png");
 	surlife = IMG_Load("Assets/LifeOut.png");
+	surchancla = IMG_Load("Assets/Slipper.png");
 	surlifein = IMG_Load("Assets/LifeIn.png");
-	surgameover = IMG_Load("Assets/GameOver.png");
 	surboss = IMG_Load("Assets/boss1.png");
+	surgameover = IMG_Load("Assets/GameOver.png");
+	surlifeoutboss = IMG_Load("Assets/LifeOutBoss.png");
+	surlifeinboss = IMG_Load("Assets/LifeInBoss.png");
 
 	surdoraemon = IMG_Load("Assets/Doraemon.png");
 	surdorayaki = IMG_Load("Assets/Dorayaki.png");
@@ -48,6 +51,7 @@ int main(int argc, char* argv[]) {
 
 
 	window = SDL_CreateWindow("Doraemon. The Real Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
+
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	texbackground = SDL_CreateTextureFromSurface(renderer, surbackground);
 	texdoraemon = SDL_CreateTextureFromSurface(renderer, surdoraemon);
@@ -56,13 +60,16 @@ int main(int argc, char* argv[]) {
 	texnobitatearrect = SDL_CreateTextureFromSurface(renderer, surnobitatearrect);
 	texlife = SDL_CreateTextureFromSurface(renderer, surlife);
 	texlifein = SDL_CreateTextureFromSurface(renderer, surlifein);
-	texboss = SDL_CreateTextureFromSurface(renderer, surboss);
 	texgameover = SDL_CreateTextureFromSurface(renderer, surgameover);
+	texboss = SDL_CreateTextureFromSurface(renderer, surboss);
 	texexam = SDL_CreateTextureFromSurface(renderer, surexam);
+	texchancla = SDL_CreateTextureFromSurface(renderer, surchancla);
+	texlifeoutboss = SDL_CreateTextureFromSurface(renderer, surlifeoutboss);
+	texlifeinboss = SDL_CreateTextureFromSurface(renderer, surlifeinboss);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
 
 
-	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surexam, surtitle01, surgameover, surlifein, surlife);
+	SDL_FreeSurface(surbackground, surdoraemon, surdorayaki, surnobita, surnobitatearrect, surchancla, surlifeoutboss, surlifeinboss, surexam, surtitle01, surgameover, surlifein, surlife, surboss);
 	while (exit == 0) {
 		if (buttona == 0) {
 			doraemonrect.x = 100;
@@ -75,11 +82,6 @@ int main(int argc, char* argv[]) {
 			nobitarect.w = 100;
 			nobitarect.h = 100;
 
-			bossrect.x = 1500;
-			bossrect.y = 260;
-			bossrect.w = 200;
-			bossrect.h = 200;
-
 			srcrectinit.w = 1280;
 			srcrectinit.h = 720;
 			srcrectinit.x = 0;
@@ -90,6 +92,16 @@ int main(int argc, char* argv[]) {
 			liferect.w = 400;
 			liferect.h = 40;
 
+			lifeinbossrect.x = 230;
+			lifeinbossrect.y = 680;
+			lifeinbossrect.w = 820;
+			lifeinbossrect.h = 40;
+
+			lifeoutbossrect.x = 0;
+			lifeoutbossrect.y = 0;
+			lifeoutbossrect.w = 1280;
+			lifeoutbossrect.h = 720;
+
 			gameoverrect.x = 0;
 			gameoverrect.y = 0;
 			gameoverrect.w = 1280;
@@ -99,6 +111,11 @@ int main(int argc, char* argv[]) {
 			lifeoutrect.y = 0;
 			lifeoutrect.w = 1280;
 			lifeoutrect.h = 720;
+
+			bossrect.x = 1500;
+			bossrect.y = 260;
+			bossrect.w = 200;
+			bossrect.h = 200;
 
 			dorayakirect.w = 50;
 			dorayakirect.h = 50;
@@ -115,11 +132,16 @@ int main(int argc, char* argv[]) {
 				examcollision[i] = 0;
 				createenemy[i] = 0;
 			}
+			for (i = 0; i < 5; i++) {
+				chanclacollision[i] = 0;
+				createenemy2[i] = 0;
+				chanclarect[i].w = 100;
+				chanclarect[i].h = 100;
+			}
 			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 			SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
 			SDL_RenderPresent(renderer);
 		}
-	
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_QUIT:
@@ -144,7 +166,7 @@ int main(int argc, char* argv[]) {
 					if (buttona == 0) {
 						buttona = 1;
 						Mix_HaltChannel(-1);
-						if(firsttime!=0)
+						if (firsttime != 0)
 							Mix_PlayMusic(music, -1);
 						firsttime = 1;
 					}
@@ -216,7 +238,7 @@ int main(int argc, char* argv[]) {
 			else if ((xleft == 1) && (doraemonrect.x > 0))
 				doraemonrect.x = doraemonrect.x - 5;
 
-			//Novita moveset
+			//Nobita moveset
 			if (yup1 == 1 && ydown1 == 1)
 				nobitarect.y = nobitarect.y;
 			else if ((yup1 == 1) && (nobitarect.y > 0))
@@ -239,17 +261,27 @@ int main(int argc, char* argv[]) {
 			else if (createbullet == 2) {
 				dorayakirect.x += 10;
 				dorayakirect.y += 1;
-				if (((dorayakirect.x+50) >= nobitarect.x && dorayakirect.x <= nobitarect.x + 100) && ((dorayakirect.y+50) >= nobitarect.y && dorayakirect.y <= nobitarect.y + 100)) {
+				if (((dorayakirect.x + 50) >= nobitarect.x && dorayakirect.x <= nobitarect.x + 100) && ((dorayakirect.y + 50) >= nobitarect.y && dorayakirect.y <= nobitarect.y + 100)) {
 					life = life - 10;
 					liferect.w -= 100;
 					createbullet = 0;
 					Mix_PlayChannel(-1, hitlife, 0);
 				}
-				for(int j=0;j<enemies;j++){
-					if (((((((dorayakirect.x + 50) >= examrect[j].x && dorayakirect.x <= examrect[j].x + 100) && ((dorayakirect.y + 50) >= examrect[j].y && dorayakirect.y <= examrect[j].y + 100)))))&&enough>0) {
+				for (int j = 0; j < enemies; j++) {
+					if (((((((dorayakirect.x + 50) >= examrect[j].x && dorayakirect.x <= examrect[j].x + 100) && ((dorayakirect.y + 50) >= examrect[j].y && dorayakirect.y <= examrect[j].y + 100))))) && enough > 0) {
 						examrect[j].x = 3000;
 						examrect[j].y = 3000;
 						createenemy[j] = 0;
+						dorayakirect.x = 3000;
+						dorayakirect.y = 3000;
+						//enough--;
+					}
+				}
+				for (int k = 0; k < enemies2; k++) {
+					if (((((((dorayakirect.x + 50) >= chanclarect[k].x && dorayakirect.x <= chanclarect[k].x + 100) && ((dorayakirect.y + 50) >= chanclarect[k].y && dorayakirect.y <= chanclarect[k].y + 100))))) && createenemy2 == 1) {
+						chanclarect[k].x = 3000;
+						chanclarect[k].y = 3000;
+						createenemy2[k] = 0;
 						dorayakirect.x = 3000;
 						dorayakirect.y = 3000;
 					}
@@ -269,7 +301,7 @@ int main(int argc, char* argv[]) {
 			else if (createbullet2 == 2) {
 				nobitatearrect.y += -1;
 				nobitatearrect.x += 10;
-				if (((nobitatearrect.x)+40 >= doraemonrect.x && nobitatearrect.x <= doraemonrect.x + 100) && ((nobitatearrect.y)+30 >= doraemonrect.y && nobitatearrect.y <= doraemonrect.y + 100)) {
+				if (((nobitatearrect.x) + 40 >= doraemonrect.x && nobitatearrect.x <= doraemonrect.x + 100) && ((nobitatearrect.y) + 30 >= doraemonrect.y && nobitatearrect.y <= doraemonrect.y + 100)) {
 					life = life - 10;
 					liferect.w -= 100;
 					createbullet2 = 0;
@@ -281,13 +313,23 @@ int main(int argc, char* argv[]) {
 						nobitatearrect.y = 3000;
 					}
 				}
+				for (int k = 0; k < enemies2; k++) {
+					if (((((((nobitatearrect.x + 50) >= chanclarect[k].x && nobitatearrect.x <= chanclarect[k].x + 100) && ((nobitatearrect.y + 50) >= chanclarect[k].y && nobitatearrect.y <= chanclarect[k].y + 100))))) && createenemy2 > 0) {
+						chanclarect[k].x = 3000;
+						chanclarect[k].y = 3000;
+						createenemy2[k] = 0;
+						nobitatearrect.x = 3000;
+						nobitatearrect.y = 3000;
+					}
+				}
+
 				if (nobitatearrect.x >= 1300) {
 					createbullet2 = 0;
 				}
 			}
-		
 
-			//Creation of enemies and their velocities
+
+			//Creation of enemies (exams) and their velocities
 			for (int i = 0; i < enemies; i++) {
 				if (createenemy[i] == 0)
 					enough--;
@@ -305,9 +347,11 @@ int main(int argc, char* argv[]) {
 					}
 				}
 				enemies = enough = futureenough;
-				if (futureenough < 16)
+
+				if (futureenough < 16) {
 					bosscreate++;
 					futureenough *= 2;
+				}
 				else
 					futureenough = 0;
 			}
@@ -348,29 +392,136 @@ int main(int argc, char* argv[]) {
 					}
 
 					//Collision exam with Nobita
-						if ((((((examrect[i].x+100) >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && ((examrect[i].y+100) >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))))) {
-							if (examcollision[i] == 0) {
-								life = life - 5;
+					if ((((((examrect[i].x + 100) >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && ((examrect[i].y + 100) >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))))) {
+						if (examcollision[i] == 0) {
+							life = life - 1;
+							liferect.w -= 50;
+							examcollision[i] = 1;
+							Mix_PlayChannel(-1, hitlife, 0);
+						}
+					}
+					else examcollision[i] = 0;
+				}
+			}
+
+
+			//Creation of enemies (chanclas) and their velocities /////////////////////  MAL!
+			/*
+			if (bosscreate >= 5) {
+				for (int i = 0; i < enemies2; i++) {
+					if (createenemy2[i] == 0)
+						enough2--;
+				}
+				if (enough2 == 0) {
+					for (int j = 0; j < futureenough2; j++) {
+						chanclarect[j].x = 1180;
+						chanclarect[j].y = rand() % 653;
+						createenemy2[j] = 1;
+						randx[j] = (rand() % 5) + 1;
+						randy[j] = (rand() % 10) + 1;
+						if (randy[j] > 5) {
+							randy[j] -= 5;
+							randy[j] = 0 - randy[j];
+						}
+					}
+					enemies2 = enough2 = futureenough2;
+
+					if (futureenough2 < 16) {
+						futureenough2 *= 2;
+					}
+					else
+						futureenough2 = 0;
+				}
+				else enough2 = enemies2;
+
+				if (enough2 != 0) {
+					for (i = 0; i < enemies2; i++) {
+						if (createenemy2[i] == 1) {
+							chanclarect[i].x -= randx[i];
+							chanclarect[i].y += randy[i];
+
+							if (chanclarect[i].x <= 0) {
+								chanclarect[i].x = 0;
+								randx[i] = 0 - randx[i];
+							}
+							else if (chanclarect[i].x >= 1280) {
+								chanclarect[i].x = 1280;
+								randx[i] = 0 - randx[i];
+							}
+							if (chanclarect[i].y <= 0) {
+								chanclarect[i].y = 0;
+								randy[i] = 0 - randy[i];
+							}
+							else if (chanclarect[i].y >= 653) {
+								chanclarect[i].y = 653;
+								randy[i] = 0 - randy[i];
+							}
+						}
+						else if (createenemy2 == 0) {
+							chanclarect[i].x = 2000;
+							chanclarect[i].y = 2000;
+						}
+
+						//Collision chancla with Nobita
+						if ((((((chanclarect[i].x + 100) >= nobitarect.x && chanclarect[i].x <= nobitarect.x + 100) && ((chanclarect[i].y + 100) >= nobitarect.y && chanclarect[i].y <= nobitarect.y + 100))))) {
+							if (chanclacollision[i] == 0) {
+								life = life - 1;
 								liferect.w -= 50;
-								examcollision[i] = 1;
+								chanclacollision[i] = 1;
 								Mix_PlayChannel(-1, hitlife, 0);
 							}
-						}	
-						else examcollision[i] = 0;
-					//}
-					
-				/*	if ((((((dorayakirect[i].x+50) >= examrect[i].x && dorayakirect[i].x <= examrect[i].x + 100) && ((dorayakirect[i].y+50) >= examrect[i].y && dorayakirect[i].y <= examrect[i].y + 100))) || ((((nobitatearrect[i].x >= examrect[i].x && nobitatearrect[i].x <= examrect[i].x + 100) && (nobitatearrect[i].y >= examrect[i].y && nobitatearrect[i].y <= examrect[i].y + 100)))))) {
-						examrect[i].x = 3000;
-						examrect[i].y = 3000;
-						buttona = 0;
-						createenemy[i] = 0;
-						dorayakirect[i].x = 3000;
-						dorayakirect[i].y = 3000;
-						enough--;
-					}*/
+						}
+						else chanclacollision[i] = 0;
+					}
 				}
-
 			}
+			*/
+
+
+
+			//BOSS Apearing (the variable bosscreate show when the exams ended and when the boss has to appear)
+			if ((bosscreate >= 5) && (bossrect.x > 1050)) {
+				bossrect.x = bossrect.x - 10;
+				bossmovey = 15;
+			}
+			if ((bosscreate >= 5) && (bossrect.x <= 1050)) {
+				bossrect.x = 1050;
+				bossrect.y = bossrect.y + bossmovey;
+				if (bossrect.y <= 0) {
+					bossmovey += 15;
+				}
+				if (bossrect.y >= 550) {
+					bossmovey -= 15;
+				}
+				futureenough2 = bossround;
+				for (int i = 0; i < futureenough2; i++) {
+					if (createchancla[i] == 0) {
+						chanclarect[i].x = bossrect.x + 1;
+						chanclarect[i].y = bossrect.y + 100;
+						createenemy2[i] = createchancla[i] = 1;
+						randx2[i] = (rand() % 10) + 5;
+						randx2[i] = 0 - randx2[i];
+						randy2[i] = (rand() % 3);
+						if (randy2[i] > 1) {
+							randy2[i] -= 2;
+							randy2[i] = 0 - randy2[i];
+						}
+					}
+					else {
+						chanclarect[i].x += randx2[i];
+						chanclarect[i].y += randy2[i];
+						if (chanclarect[i].x <= -100) {
+							createenemy2[i] = createchancla[i] = 0;
+						}
+						else if (chanclarect[i].y < -100 || chanclarect[i].y>720) {
+							createenemy2[i] = createchancla[i] = 0;
+						}
+					}
+
+				}
+			}
+
+
 			if (life <= 0) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 				SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
@@ -393,26 +544,43 @@ int main(int argc, char* argv[]) {
 						SDL_RenderCopy(renderer, texexam, NULL, &examrect[i]);
 					}
 				}
-				//if (bosscreate >= 5) {
+				if (bosscreate >= 5) {
 					SDL_RenderCopy(renderer, texboss, NULL, &bossrect);
+					SDL_RenderCopy(renderer, texlifeinboss, NULL, &lifeinbossrect);
+					SDL_RenderCopy(renderer, texlifeoutboss, NULL, &lifeoutbossrect);
+					for (i = 0; i < futureenough2; i++) {
+						if (createenemy2[i] != 0) {
+							SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+							SDL_RenderFillRect(renderer, &chanclarect[i]);
+							SDL_RenderCopy(renderer, texchancla, NULL, &chanclarect[i]);
+						}
+					}
 				}
+
+
 				SDL_RenderCopy(renderer, texlifein, NULL, &liferect);
 				SDL_RenderCopy(renderer, texlife, NULL, &lifeoutrect);
 			}
 
-				if (createbullet > 0) {
-					SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-					SDL_RenderFillRect(renderer, &dorayakirect);
-					SDL_RenderCopy(renderer, texdorayaki, NULL, &dorayakirect);
-				}
+			if (createbullet > 0) {
+				SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+				SDL_RenderFillRect(renderer, &dorayakirect);
+				SDL_RenderCopy(renderer, texdorayaki, NULL, &dorayakirect);
+			}
 
-				if (createbullet2 > 0) {
-					SDL_RenderCopy(renderer, texnobitatearrect, NULL, &nobitatearrect);
-				}
+			if (createbullet2 > 0) {
+				SDL_RenderCopy(renderer, texnobitatearrect, NULL, &nobitatearrect);
+			}
 			SDL_RenderPresent(renderer);
-			
+
 		}
 	}
+
+
+
+
+
+
 	SDL_DestroyTexture(texbackground, texdoraemon, texdorayaki, texnobita, title01, texexam, texgameover, texlife, texlifein, texnobitatearrect);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

@@ -11,7 +11,7 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, countout=0, ydown = 0, yup = 0, xright = 0, xleft = 0, bosscreate=0, examcollision[16] = { 0 }, chanclacollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, createenemy2[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, enough2 = 0, futureenough2 = 1, life = 40, lifeboss = 820, GameOver, enemies=0, enemies2=0, xchange = 0, ychange = 0, firsttime = 0, bossmovey=0;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, countout=0, ydown = 0, yup = 0, xright = 0, xleft = 0, bosscreate=0, examcollision[16] = { 0 }, chanclacollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, createenemy2[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, enough2 = 0, futureenough2 = 1, life = 40, lifeboss = 820, GameOver, enemies=0, enemies2=0, xchange = 0, ychange = 0, firsttime = 0, bossmovey=0,bossround = 1, createchancla[5] = { 0 }, randx2[5] = { 0 }, randy2[5] = { 0 };
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
@@ -133,6 +133,12 @@ int main(int argc, char* argv[]) {
 			for (i = 0; i < 16; i++) {
 				examcollision[i] = 0;
 				createenemy[i] = 0;
+			}
+			for (i = 0; i < 5; i++) {
+				chanclacollision[i] = 0;
+				createenemy2[i] = 0;
+				chanclarect[i].w = 100;
+				chanclarect[i].h = 100;
 			}
 			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 			SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
@@ -494,6 +500,33 @@ int main(int argc, char* argv[]) {
 				if (bossrect.y >= 550) {
 					bossmovey -= 15;
 				}
+				futureenough2 = bossround;
+				for (int i = 0; i < futureenough2; i++) {
+					if (createchancla[i] == 0) {
+						chanclarect[i].x = bossrect.x + 1;
+						chanclarect[i].y = bossrect.y + 100;
+						createenemy2[i] = createchancla[i] = 1;
+						randx2[i] = (rand() % 10) + 5;
+						randx2[i] = 0 - randx2[i];
+						randy2[i] = (rand() % 3);
+						if (randy2[i] > 1) {
+							randy2[i] -= 2;
+							randy2[i] = 0 - randy2[i];
+						}
+					}
+					else {
+						chanclarect[i].x += randx2[i];
+						chanclarect[i].y += randy2[i];
+						if (chanclarect[i].x <= -100) {
+							createenemy2[i] = createchancla[i] = 0;
+						}
+						else if (chanclarect[i].y < -100 || chanclarect[i].y>720) {
+							createenemy2[i] = createchancla[i] = 0;
+						}
+					}
+
+				}
+
 			}
 
 
@@ -525,8 +558,8 @@ int main(int argc, char* argv[]) {
 					SDL_RenderCopy(renderer, texboss, NULL, &bossrect);
 					SDL_RenderCopy(renderer, texlifeinboss, NULL, &lifeinbossrect);
 					SDL_RenderCopy(renderer, texlifeoutboss, NULL, &lifeoutbossrect);
-					for (i = 0; i < enemies2; i++) {
-						if (createenemy != 0) {
+					for (i = 0; i < futureenough2; i++) {
+						if (createenemy2[i] != 0) {
 							SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 							SDL_RenderFillRect(renderer, &chanclarect[i]);
 							SDL_RenderCopy(renderer, texchancla, NULL, &chanclarect[i]);
