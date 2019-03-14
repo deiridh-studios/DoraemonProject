@@ -29,7 +29,9 @@ int main(int argc, char* argv[]) {
 	victory = Mix_LoadWAV("Assets/victorysong.wav");
 	gameov = Mix_LoadWAV("Assets/defeatsound.wav");
 	Mix_Music *music;
+	Mix_Music *bossmusic;
 	music = Mix_LoadMUS("Assets/DoraemonBackground.ogg");
+	bossmusic= Mix_LoadMUS("Assets/bosssong.ogg");
 	Mix_PlayMusic(music, -1);
 
 	surbackground = IMG_Load("Assets/Background.png");
@@ -278,11 +280,11 @@ int main(int argc, char* argv[]) {
 						//enough--;
 					}
 				}
-				for (int k = 0; k < enemies2; k++) {
-					if (((((((dorayakirect.x + 50) >= chanclarect[k].x && dorayakirect.x <= chanclarect[k].x + 100) && ((dorayakirect.y + 50) >= chanclarect[k].y && dorayakirect.y <= chanclarect[k].y + 100))))) && enough2 > 0) {
+				for (int k = 0; k < futureenough2; k++) {
+					if (((((((dorayakirect.x + 50) >= chanclarect[k].x && dorayakirect.x <= chanclarect[k].x + 100) && ((dorayakirect.y + 50) >= chanclarect[k].y && dorayakirect.y <= chanclarect[k].y + 100))))) && createchancla[k] > 0) {
 						chanclarect[k].x = 3000;
 						chanclarect[k].y = 3000;
-						createenemy2[k] = 0;
+						createenemy2[k] =createchancla[k]= 0;
 						dorayakirect.x = 3000;
 						dorayakirect.y = 3000;
 					}
@@ -314,20 +316,19 @@ int main(int argc, char* argv[]) {
 						nobitatearrect.y = 3000;
 					}
 				}
-				for (int k = 0; k < enemies2; k++) {
-					if (((((((nobitatearrect.x + 50) >= chanclarect[k].x && nobitatearrect.x <= chanclarect[k].x + 100) && ((nobitatearrect.y + 50) >= chanclarect[k].y && nobitatearrect.y <= chanclarect[k].y + 100))))) && enough2 > 0) {
-						chanclarect[k].x = 3000;
-						chanclarect[k].y = 3000;
-						createenemy2[k] = 0;
+				for (int k = 0; k < futureenough2; k++) {
+					if (((((((nobitatearrect.x + 40) >= chanclarect[k].x && nobitatearrect.x <= chanclarect[k].x + 100) && ((nobitatearrect.y + 40) >= chanclarect[k].y && nobitatearrect.y <= chanclarect[k].y + 100))))) && createchancla[k] > 0) {
 						nobitatearrect.x = 3000;
 						nobitatearrect.y = 3000;
 					}
 				}
 				if (bosscreate >= 5) {
-					if (((nobitatearrect.x) + 50 >= bossrect.x && nobitatearrect.x <= bossrect.x + 150) && ((nobitatearrect.y) + 50 >= bossrect.y && nobitatearrect.y <= bossrect.y + 150)) {
+					if (((nobitatearrect.x) + 40 >= bossrect.x && nobitatearrect.x <= bossrect.x + 150) && ((nobitatearrect.y) + 40 >= bossrect.y && nobitatearrect.y <= bossrect.y + 150)) {
 						lifeboss = lifeboss - 50;
 						lifeinbossrect.w -= 50;
 						createbullet2 = 0;
+						if (bossround < 5)
+							bossround++;
 					}
 				}
 				if (nobitatearrect.x >= 1300) {
@@ -397,6 +398,7 @@ int main(int argc, char* argv[]) {
 						examrect[i].x = 2000;
 						examrect[i].y = 2000;
 					}
+					
 
 					//Collision exam with Nobita
 						if ((((((examrect[i].x+100) >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && ((examrect[i].y+100) >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))))) {
@@ -412,82 +414,10 @@ int main(int argc, char* argv[]) {
 			}
 
 
-			//Creation of enemies (chanclas) and their velocities /////////////////////  MAL!
-			/*
-			if (bosscreate >= 5) {
-				for (int i = 0; i < enemies2; i++) {
-					if (createenemy2[i] == 0)
-						enough2--;
-				}
-				if (enough2 == 0) {
-					for (int j = 0; j < futureenough2; j++) {
-						chanclarect[j].x = 1180;
-						chanclarect[j].y = rand() % 653;
-						createenemy2[j] = 1;
-						randx[j] = (rand() % 5) + 1;
-						randy[j] = (rand() % 10) + 1;
-						if (randy[j] > 5) {
-							randy[j] -= 5;
-							randy[j] = 0 - randy[j];
-						}
-					}
-					enemies2 = enough2 = futureenough2;
-
-					if (futureenough2 < 16) {
-						futureenough2 *= 2;
-					}
-					else
-						futureenough2 = 0;
-				}
-				else enough2 = enemies2;
-
-				if (enough2 != 0) {
-					for (i = 0; i < enemies2; i++) {
-						if (createenemy2[i] == 1) {
-							chanclarect[i].x -= randx[i];
-							chanclarect[i].y += randy[i];
-
-							if (chanclarect[i].x <= 0) {
-								chanclarect[i].x = 0;
-								randx[i] = 0 - randx[i];
-							}
-							else if (chanclarect[i].x >= 1280) {
-								chanclarect[i].x = 1280;
-								randx[i] = 0 - randx[i];
-							}
-							if (chanclarect[i].y <= 0) {
-								chanclarect[i].y = 0;
-								randy[i] = 0 - randy[i];
-							}
-							else if (chanclarect[i].y >= 653) {
-								chanclarect[i].y = 653;
-								randy[i] = 0 - randy[i];
-							}
-						}
-						else if (createenemy2 == 0) {
-							chanclarect[i].x = 2000;
-							chanclarect[i].y = 2000;
-						}
-
-						//Collision chancla with Nobita
-						if ((((((chanclarect[i].x + 100) >= nobitarect.x && chanclarect[i].x <= nobitarect.x + 100) && ((chanclarect[i].y + 100) >= nobitarect.y && chanclarect[i].y <= nobitarect.y + 100))))) {
-							if (chanclacollision[i] == 0) {
-								life = life - 1;
-								liferect.w -= 50;
-								chanclacollision[i] = 1;
-								Mix_PlayChannel(-1, hitlife, 0);
-							}
-						}
-						else chanclacollision[i] = 0;
-					}
-				}
-			}
-			*/
-
-
-
 			//BOSS Apearing (the variable bosscreate show when the exams ended and when the boss has to appear)
 			if ((bosscreate >= 5) && (bossrect.x >1050)) {
+				Mix_HaltMusic(music);
+				Mix_PlayMusic(bossmusic, -1);
 				bossrect.x = bossrect.x - 10;
 				bossmovey = 15;
 			}
@@ -524,9 +454,24 @@ int main(int argc, char* argv[]) {
 							createenemy2[i] = createchancla[i] = 0;
 						}
 					}
-
+					if ((((((chanclarect[i].x + 100) >= doraemonrect.x && chanclarect[i].x <= doraemonrect.x + 100) && ((chanclarect[i].y + 100) >= doraemonrect.y && chanclarect[i].y <= doraemonrect.y + 100))))) {
+						life = life - 1;
+						liferect.w -= 50;
+						Mix_PlayChannel(-1, hitlife, 0);
+						createenemy2[i] = createchancla[i] = 0;
+						chanclarect[i].x = 2000;
+						chanclarect[i].y = 2000;
+					}
+					if ((((((chanclarect[i].x + 100) >= nobitarect.x && chanclarect[i].x <= nobitarect.x + 100) && ((chanclarect[i].y + 100) >= nobitarect.y && chanclarect[i].y <= nobitarect.y + 100))))) {
+						life = life - 1;
+						liferect.w -= 50;
+						Mix_PlayChannel(-1, hitlife, 0);
+						createenemy2[i] = createchancla[i] = 0;
+						chanclarect[i].x = 2000;
+						chanclarect[i].y = 2000;
+					}
 				}
-
+					
 			}
 
 
