@@ -11,14 +11,14 @@
 
 int main(int argc, char* argv[]) {
 	srand(time(NULL));
-	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, bosscreate=0, examcollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, life = 40, GameOver, enemies=0, xchange = 0, ychange = 0, firsttime = 0;
+	int exit = 0, i, xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, xright = 0, xleft = 0, examcollision[16] = { 0 }, createbullet = 0, spaceup = 0, createbullet2 =  0, pup = 0, buttona = 0, randtear, randdorayaki, createenemy[16] = { 0 }, randx[16], randy[16], enough = 0, futureenough = 1, life = 40, GameOver, enemies=0, xchange = 0, ychange = 0, firsttime=0;
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO);
 	SDL_Window *window;
 	SDL_Renderer *renderer;
-	SDL_Rect doraemonrect, dorayakirect, nobitarect,  nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect, bossrect;
+	SDL_Rect doraemonrect, dorayakirect, nobitarect,  nobitatearrect, examrect[16], srcrectinit, liferect, lifeoutrect, gameoverrect;
 	SDL_Event event;
-	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surboss, *surgameover;
-	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texboss, *texgameover;
+	SDL_Surface *surbackground, *surdoraemon, *surdorayaki, *surnobita, *surnobitatearrect, *surexam, *surlife, *surtitle01, *surlifein, *surgameover;
+	SDL_Texture *texbackground, *texdoraemon, *texdorayaki, *texnobita, *texnobitatearrect, *texexam, *texlife, *title01, *texlifein, *texgameover;
 	IMG_Init(IMG_INIT_PNG);
 	Mix_Init(MIX_INIT_OGG);
 	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_CHANNELS, 4096) == -1);
@@ -34,7 +34,6 @@ int main(int argc, char* argv[]) {
 	surbackground = IMG_Load("Assets/Background.png");
 	surlife = IMG_Load("Assets/LifeOut.png");
 	surlifein = IMG_Load("Assets/LifeIn.png");
-	surboss = IMG_Load("Assets/Doraemon.png");
 	surgameover = IMG_Load("Assets/GameOver.png");
 
 	surdoraemon = IMG_Load("Assets/Doraemon.png");
@@ -48,7 +47,6 @@ int main(int argc, char* argv[]) {
 
 
 	window = SDL_CreateWindow("Doraemon. The Real Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, 0);
-	
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
 	texbackground = SDL_CreateTextureFromSurface(renderer, surbackground);
 	texdoraemon = SDL_CreateTextureFromSurface(renderer, surdoraemon);
@@ -58,12 +56,11 @@ int main(int argc, char* argv[]) {
 	texlife = SDL_CreateTextureFromSurface(renderer, surlife);
 	texlifein = SDL_CreateTextureFromSurface(renderer, surlifein);
 	texgameover = SDL_CreateTextureFromSurface(renderer, surgameover);
-	texboss = SDL_CreateTextureFromSurface(renderer, surboss);
 	texexam = SDL_CreateTextureFromSurface(renderer, surexam);
 	title01 = SDL_CreateTextureFromSurface(renderer, surtitle01);
 
 
-	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surexam, surtitle01, surgameover, surlifein, surlife, surboss);
+	SDL_FreeSurface(surbackground,surdoraemon,surdorayaki, surnobita, surnobitatearrect, surexam, surtitle01, surgameover, surlifein, surlife);
 	while (exit == 0) {
 		if (buttona == 0) {
 			doraemonrect.x = 100;
@@ -96,11 +93,6 @@ int main(int argc, char* argv[]) {
 			lifeoutrect.w = 1280;
 			lifeoutrect.h = 720;
 
-			bossrect.x = 1500;
-			bossrect.y = 260;
-			bossrect.w = 200;
-			bossrect.h = 200;
-
 			dorayakirect.w = 50;
 			dorayakirect.h = 50;
 
@@ -120,6 +112,7 @@ int main(int argc, char* argv[]) {
 			SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
 			SDL_RenderPresent(renderer);
 		}
+	
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_QUIT:
@@ -144,7 +137,7 @@ int main(int argc, char* argv[]) {
 					if (buttona == 0) {
 						buttona = 1;
 						Mix_HaltChannel(-1);
-						if (firsttime != 0)
+						if(firsttime!=0)
 							Mix_PlayMusic(music, -1);
 						firsttime = 1;
 					}
@@ -252,7 +245,6 @@ int main(int argc, char* argv[]) {
 						createenemy[j] = 0;
 						dorayakirect.x = 3000;
 						dorayakirect.y = 3000;
-						//enough--;
 					}
 				}
 				if (dorayakirect.x >= 1300) {
@@ -306,11 +298,8 @@ int main(int argc, char* argv[]) {
 					}
 				}
 				enemies = enough = futureenough;
-
-				if (futureenough < 16) {
-					bosscreate++;
+				if (futureenough < 16)
 					futureenough *= 2;
-				}
 				else
 					futureenough = 0;
 			}
@@ -389,7 +378,7 @@ int main(int argc, char* argv[]) {
 					//Collision exam with Nobita
 						if ((((((examrect[i].x+100) >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && ((examrect[i].y+100) >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))))) {
 							if (examcollision[i] == 0) {
-								life = life - 1;
+								life = life - 5;
 								liferect.w -= 50;
 								examcollision[i] = 1;
 								Mix_PlayChannel(-1, hitlife, 0);
@@ -414,12 +403,6 @@ int main(int argc, char* argv[]) {
 
 				}*/
 			}
-
-			if (bosscreate >= 5) {
-				bossrect.x = bossrect.x - 50;
-			}
-
-
 			if (life <= 0) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 				SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
@@ -442,10 +425,6 @@ int main(int argc, char* argv[]) {
 						SDL_RenderCopy(renderer, texexam, NULL, &examrect[i]);
 					}
 				}
-				if (bosscreate >= 5) {
-					SDL_RenderCopy(renderer, texboss, NULL, &bossrect);
-				}
-
 				SDL_RenderCopy(renderer, texlifein, NULL, &liferect);
 				SDL_RenderCopy(renderer, texlife, NULL, &lifeoutrect);
 			}
