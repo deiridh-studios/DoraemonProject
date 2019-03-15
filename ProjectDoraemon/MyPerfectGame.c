@@ -110,6 +110,11 @@ int main(int argc, char* argv[]) {
 			lifeoutbossrect.w = 1280;
 			lifeoutbossrect.h = 720;
 
+			victoryrect.x = 0;
+			victoryrect.y = 0;
+			victoryrect.w = 1280;
+			victoryrect.h = 720;
+
 			gameoverrect.x = 0;
 			gameoverrect.y = 0;
 			gameoverrect.w = 1280;
