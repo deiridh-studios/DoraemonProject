@@ -521,8 +521,8 @@ int main(int argc, char* argv[]) {
 			if (life <= 0) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 				SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
-				Mix_HaltMusic();
 				Mix_PlayChannel(-1, gameov, 0);
+				Mix_HaltMusic();
 				buttona = 0;
 				//countout++;
 				bosscreate = 0;
