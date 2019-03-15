@@ -174,6 +174,7 @@ int main(int argc, char* argv[]) {
 							Mix_PlayMusic(music, -1);
 						firsttime = 1;
 					}
+
 					else {
 						xleft1 = 1;
 					}
@@ -476,13 +477,23 @@ int main(int argc, char* argv[]) {
 
 
 			if (life <= 0) {
-				buttona = 0;
+				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+				SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
+				Mix_HaltMusic();
+				Mix_PlayChannel(-1, gameov, 0);
+				buttona = 2;
 				countout++;
+				SDL_RenderPresent(renderer);
 			}
 
 			if (lifeboss <= 0) {
-				buttona = 0;
+				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+				SDL_RenderCopy(renderer, texvictory, NULL, &victoryrect);
+				Mix_HaltMusic();
+				Mix_PlayChannel(-1, victory, 0);
+				buttona = 2;
 				countout++;
+				SDL_RenderPresent(renderer);
 			}
 
 			if ((liferect.w >= 1)&&(lifeinbossrect.w >=1)) {
@@ -518,7 +529,6 @@ int main(int argc, char* argv[]) {
 			}
 
 
-
 			if (createbullet > 0) {
 					SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 					SDL_RenderFillRect(renderer, &dorayakirect);
@@ -532,21 +542,6 @@ int main(int argc, char* argv[]) {
 			SDL_RenderPresent(renderer);
 		}
 
-		if ((lifeboss <= 0) && (countout >=1) && (buttona== 0)) {
-			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
-			SDL_RenderCopy(renderer, texvictory, NULL, &victoryrect);
-			Mix_HaltMusic();
-			Mix_PlayChannel(-1, victory, 0);
-			buttona = 0;
-		}
-
-		if ((life <= 0) && (countout >= 1 && (buttona == 0))) {
-			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
-			SDL_RenderCopy(renderer, texgameover, NULL, &gameoverrect);
-			Mix_HaltMusic();
-			Mix_PlayChannel(-1, gameov, 0);
-			countout++;
-		}
 	}
 
 	SDL_DestroyTexture(texbackground, texdoraemon, texdorayaki, texnobita, title01, texexam, texgameover, texlife, texlifein, texnobitatearrect);
