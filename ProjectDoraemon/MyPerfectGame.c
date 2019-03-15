@@ -199,7 +199,9 @@ int main(int argc, char* argv[]) {
 				for (i = 0; i < 20; i++) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_P && createbullet == 0 && spaceup == 0) {
 						if (buttona == 1) {
+							if ((lifeboss > 0) && (life > 0)) {
 							Mix_PlayChannel(-1, spaceeffect, 0);
+							}
 							createbullet = 1;
 						}
 						spaceup = 1;
@@ -208,7 +210,9 @@ int main(int argc, char* argv[]) {
 				for (i = 0; i < 20; i++) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_SPACE && createbullet2 == 0 && pup == 0) {
 						if (buttona == 1) {
-							Mix_PlayChannel(-1, spaceeffect, 0);
+							if ((lifeboss > 0) && (life > 0)) {
+								Mix_PlayChannel(-1, spaceeffect, 0);
+							}
 							createbullet2 = 1;
 						}
 						pup = 1;
@@ -282,14 +286,14 @@ int main(int argc, char* argv[]) {
 			else if (createbullet == 2) {
 				dorayakirect.x += 10;
 				dorayakirect.y += 1;
-				if (((dorayakirect.x+50) >= nobitarect.x && dorayakirect.x <= nobitarect.x + 100) && ((dorayakirect.y+50) >= nobitarect.y && dorayakirect.y <= nobitarect.y + 100)) {
+				if (((dorayakirect.x + 50) >= nobitarect.x && dorayakirect.x <= nobitarect.x + 100) && ((dorayakirect.y + 50) >= nobitarect.y && dorayakirect.y <= nobitarect.y + 100)) {
 					life = life - 10;
 					liferect.w -= 100;
 					createbullet = 0;
 					Mix_PlayChannel(-1, hitlife, 0);
 				}
-				for(int j=0;j<enemies;j++){
-					if (((((((dorayakirect.x + 50) >= examrect[j].x && dorayakirect.x <= examrect[j].x + 100) && ((dorayakirect.y + 50) >= examrect[j].y && dorayakirect.y <= examrect[j].y + 100)))))&&enough>0) {
+				for (int j = 0; j < enemies; j++) {
+					if (((((((dorayakirect.x + 50) >= examrect[j].x && dorayakirect.x <= examrect[j].x + 100) && ((dorayakirect.y + 50) >= examrect[j].y && dorayakirect.y <= examrect[j].y + 100))))) && enough > 0) {
 						examrect[j].x = 3000;
 						examrect[j].y = 3000;
 						createenemy[j] = 0;
@@ -302,7 +306,7 @@ int main(int argc, char* argv[]) {
 					if (((((((dorayakirect.x + 50) >= chanclarect[k].x && dorayakirect.x <= chanclarect[k].x + 100) && ((dorayakirect.y + 50) >= chanclarect[k].y && dorayakirect.y <= chanclarect[k].y + 100))))) && createchancla[k] > 0) {
 						chanclarect[k].x = 3000;
 						chanclarect[k].y = 3000;
-						createenemy2[k] =createchancla[k]= 0;
+						createenemy2[k] = createchancla[k] = 0;
 						dorayakirect.x = 3000;
 						dorayakirect.y = 3000;
 					}
@@ -322,7 +326,7 @@ int main(int argc, char* argv[]) {
 			else if (createbullet2 == 2) {
 				nobitatearrect.y += -1;
 				nobitatearrect.x += 10;
-				if (((nobitatearrect.x)+40 >= doraemonrect.x && nobitatearrect.x <= doraemonrect.x + 100) && ((nobitatearrect.y)+30 >= doraemonrect.y && nobitatearrect.y <= doraemonrect.y + 100)) {
+				if (((nobitatearrect.x) + 40 >= doraemonrect.x && nobitatearrect.x <= doraemonrect.x + 100) && ((nobitatearrect.y) + 30 >= doraemonrect.y && nobitatearrect.y <= doraemonrect.y + 100)) {
 					life = life - 10;
 					liferect.w -= 100;
 					createbullet2 = 0;
@@ -353,7 +357,7 @@ int main(int argc, char* argv[]) {
 					createbullet2 = 0;
 				}
 			}
-		
+
 
 			//Creation of enemies (exams) and their velocities
 			for (int i = 0; i < enemies; i++) {
@@ -417,24 +421,24 @@ int main(int argc, char* argv[]) {
 						examrect[i].x = 2000;
 						examrect[i].y = 2000;
 					}
-					
+
 
 					//Collision exam with Nobita
-						if ((((((examrect[i].x+100) >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && ((examrect[i].y+100) >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))))) {
-							if (examcollision[i] == 0) {
-								life = life - 1;
-								liferect.w -= 50;
-								examcollision[i] = 1;
-								Mix_PlayChannel(-1, hitlife, 0);
-							}
-						}	
-						else examcollision[i] = 0;
+					if ((((((examrect[i].x + 100) >= nobitarect.x && examrect[i].x <= nobitarect.x + 100) && ((examrect[i].y + 100) >= nobitarect.y && examrect[i].y <= nobitarect.y + 100))))) {
+						if (examcollision[i] == 0) {
+							life = life - 5;
+							liferect.w -= 50;
+							examcollision[i] = 1;
+							Mix_PlayChannel(-1, hitlife, 0);
+						}
+					}
+					else examcollision[i] = 0;
 				}
 			}
 
 
 			//BOSS Apearing (the variable bosscreate show when the exams ended and when the boss has to appear)
-			if ((bosscreate >= 5) && (bossrect.x >1050)) {
+			if ((bosscreate >= 5) && (bossrect.x > 1050)) {
 				Mix_HaltMusic(music);
 				Mix_PlayMusic(bossmusic, -1);
 				bossrect.x = bossrect.x - 10;
@@ -474,7 +478,7 @@ int main(int argc, char* argv[]) {
 						}
 					}
 					if ((((((chanclarect[i].x + 100) >= doraemonrect.x && chanclarect[i].x <= doraemonrect.x + 100) && ((chanclarect[i].y + 100) >= doraemonrect.y && chanclarect[i].y <= doraemonrect.y + 100))))) {
-						life = life - 1;
+						life = life - 5;
 						liferect.w -= 50;
 						Mix_PlayChannel(-1, hitlife, 0);
 						createenemy2[i] = createchancla[i] = 0;
@@ -482,7 +486,7 @@ int main(int argc, char* argv[]) {
 						chanclarect[i].y = 2000;
 					}
 					if ((((((chanclarect[i].x + 100) >= nobitarect.x && chanclarect[i].x <= nobitarect.x + 100) && ((chanclarect[i].y + 100) >= nobitarect.y && chanclarect[i].y <= nobitarect.y + 100))))) {
-						life = life - 1;
+						life = life - 5;
 						liferect.w -= 50;
 						Mix_PlayChannel(-1, hitlife, 0);
 						createenemy2[i] = createchancla[i] = 0;
@@ -490,7 +494,7 @@ int main(int argc, char* argv[]) {
 						chanclarect[i].y = 2000;
 					}
 				}
-					
+
 			}
 
 
@@ -504,7 +508,7 @@ int main(int argc, char* argv[]) {
 				countout++;
 				bosscreate = 0;
 			}
-			
+
 
 			if (lifeboss <= 0) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
@@ -516,7 +520,7 @@ int main(int argc, char* argv[]) {
 				bosscreate = 0;
 			}
 
-			if ((liferect.w >= 1)&&(lifeinbossrect.w >=1)) {
+			if ((liferect.w >= 1) && (lifeinbossrect.w >= 1)) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 				SDL_RenderFillRect(renderer, &doraemonrect);
@@ -543,25 +547,23 @@ int main(int argc, char* argv[]) {
 					}
 				}
 
+				if ((lifeboss > 0) && (life > 0)) {
+					if (createbullet > 0) {
+						SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+						SDL_RenderFillRect(renderer, &dorayakirect);
+						SDL_RenderCopy(renderer, texdorayaki, NULL, &dorayakirect);
+					}
+
+					if (createbullet2 > 0) {
+						SDL_RenderCopy(renderer, texnobitatearrect, NULL, &nobitatearrect);
+					}
+				}
 
 				SDL_RenderCopy(renderer, texlifein, NULL, &liferect);
 				SDL_RenderCopy(renderer, texlife, NULL, &lifeoutrect);
 			}
-
-
-			if (createbullet > 0) {
-					SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-					SDL_RenderFillRect(renderer, &dorayakirect);
-					SDL_RenderCopy(renderer, texdorayaki, NULL, &dorayakirect);
-			}
-
-			if (createbullet2 > 0) {
-					SDL_RenderCopy(renderer, texnobitatearrect, NULL, &nobitatearrect);
-			}
-
 			SDL_RenderPresent(renderer);
 		}
-
 	}
 
 	SDL_DestroyTexture(texbackground, texdoraemon, texdorayaki, texnobita, title01, texexam, texgameover, texlife, texlifein, texnobitatearrect);
