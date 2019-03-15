@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
 				examrect[i].w = 100;
 				examrect[i].h = 100;
 			}
-			xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, life = 40, xright = 0, xleft = 0, createbullet = 0, spaceup = 0, createbullet2 = 0, pup = 0, buttona = 0, enough = 0, futureenough = 1, enemies = 0, xchange = 0, ychange = 0;
+			xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, life = 40, xright = 0, xleft = 0, createbullet = 0, spaceup = 0, createbullet2 = 0, pup = 0, buttona = 0, enough = 0, futureenough = 1, enemies = 0, xchange = 0, ychange = 0, lifeboss = 820;
 			for (i = 0; i < 16; i++) {
 				examcollision[i] = 0;
 				createenemy[i] = 0;
@@ -195,10 +195,10 @@ int main(int argc, char* argv[]) {
 					ydown1 = 1;
 				if (event.key.keysym.scancode == SDL_SCANCODE_D)
 					xright1 = 1;
-				if (event.key.keysym.scancode == SDL_SCANCODE_A)
+				if (event.key.keysym.scancode == SDL_SCANCODE_A) {
 					if (buttona == 0) {
-						//Mix_HaltChannel(-1);
 						if (firsttime != 0) {
+							Mix_HaltChannel(-1);
 							Mix_PlayMusic(music, -1);
 							buttona = 1;
 						}
@@ -213,6 +213,7 @@ int main(int argc, char* argv[]) {
 					else {
 						xleft1 = 1;
 					}
+				}
 
 				for (i = 0; i < 20; i++) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_P && createbullet == 0 && spaceup == 0) {
