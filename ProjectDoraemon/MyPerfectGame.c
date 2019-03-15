@@ -157,11 +157,23 @@ int main(int argc, char* argv[]) {
 				chanclarect[i].h = 100;
 			}
 
-			if (countout == 0) {
+		//	if (countout == 0) {
+			if (firsttime == 0) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
 				SDL_RenderCopy(renderer, title01, NULL, &srcrectinit);
 				SDL_RenderPresent(renderer);
 			}
+			//}
+		}
+		else if (buttona == 2) {
+			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+			SDL_RenderCopy(renderer, texexplication01, NULL, &srcrectinit);
+			SDL_RenderPresent(renderer);
+		}
+		else if (buttona == 3) {
+			SDL_RenderCopy(renderer, texbackground, NULL, NULL);
+			SDL_RenderCopy(renderer, texexplication02, NULL, &srcrectinit);
+			SDL_RenderPresent(renderer);
 		}
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -185,16 +197,22 @@ int main(int argc, char* argv[]) {
 					xright1 = 1;
 				if (event.key.keysym.scancode == SDL_SCANCODE_A)
 					if (buttona == 0) {
-						buttona = 1;
-						Mix_HaltChannel(-1);
-						if (firsttime != 0)
+						//Mix_HaltChannel(-1);
+						if (firsttime != 0) {
 							Mix_PlayMusic(music, -1);
+							buttona = 1;
+						}
+						else
+							buttona = 2;
 						firsttime = 1;
 					}
+					else if (buttona == 2)
+						buttona = 3;
+					else if (buttona == 3)
+						buttona = 1;
 					else {
 						xleft1 = 1;
 					}
-				buttona = 1;
 
 				for (i = 0; i < 20; i++) {
 					if (event.key.keysym.scancode == SDL_SCANCODE_P && createbullet == 0 && spaceup == 0) {
@@ -505,7 +523,7 @@ int main(int argc, char* argv[]) {
 				Mix_HaltMusic();
 				Mix_PlayChannel(-1, gameov, 0);
 				buttona = 0;
-				countout++;
+				//countout++;
 				bosscreate = 0;
 			}
 
@@ -516,7 +534,7 @@ int main(int argc, char* argv[]) {
 				Mix_HaltMusic();
 				Mix_PlayChannel(-1, victory, 0);
 				buttona = 0;
-				countout++;
+				//countout++;
 				bosscreate = 0;
 			}
 
@@ -566,18 +584,19 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	SDL_DestroyTexture(texbackground, texdoraemon, texdorayaki, texnobita, title01, texexam, texgameover, texlife, texlifein, texnobitatearrect);
+	SDL_DestroyTexture(texbackground, texdoraemon, texdorayaki, texnobita, title01, texexam, texgameover, texlife, texlifein, texnobitatearrect, texboss, texchancla, texlifeinboss, texlifeoutboss, texvictory);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	Mix_FreeMusic(bossmusic);
 	Mix_FreeMusic(music);
 	Mix_FreeChunk(hitlife);
+	Mix_FreeChunk(gameov);
+	Mix_FreeChunk(victory);
 	Mix_FreeChunk(spaceeffect);
 	Mix_CloseAudio();
-
 	while (Mix_Init(0)) {
 		Mix_Quit();
 	}
-
 	IMG_Quit();
 	SDL_Quit();
 	return 0;
