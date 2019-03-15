@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
 				examrect[i].w = 100;
 				examrect[i].h = 100;
 			}
-			xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, life = 40, xright = 0, xleft = 0, createbullet = 0, spaceup = 0, createbullet2 = 0, pup = 0, buttona = 0, enough = 0, futureenough = 1, enemies = 0, xchange = 0, ychange = 0, lifeboss = 820;
+			xleft1 = 0, xright1 = 0, yup1 = 0, ydown1 = 0, ydown = 0, yup = 0, life = 40, xright = 0, xleft = 0, createbullet = 0, spaceup = 0, createbullet2 = 0, pup = 0, buttona = 0, enough = 0, futureenough = 1, enemies = 0, xchange = 0, ychange = 0, lifeboss = 820, bossround=1, futureenough2=1;
 			for (i = 0; i < 16; i++) {
 				examcollision[i] = 0;
 				createenemy[i] = 0;
@@ -160,6 +160,7 @@ int main(int argc, char* argv[]) {
 				createenemy2[i] = 0;
 				chanclarect[i].w = 100;
 				chanclarect[i].h = 100;
+				createchancla[i] = 0;
 			}
 
 		//	if (countout == 0) {
