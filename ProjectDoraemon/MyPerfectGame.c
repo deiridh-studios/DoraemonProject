@@ -541,15 +541,15 @@ int main(int argc, char* argv[]) {
 
 			if ((liferect.w >= 1) && (lifeinbossrect.w >= 1)) {
 				SDL_RenderCopy(renderer, texbackground, NULL, NULL);
-				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-				SDL_RenderFillRect(renderer, &doraemonrect);
+				//SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+				//SDL_RenderFillRect(renderer, &doraemonrect);
 				SDL_RenderCopy(renderer, texdoraemon, NULL, &doraemonrect);
-				SDL_RenderFillRect(renderer, &nobitarect);
+				//SDL_RenderFillRect(renderer, &nobitarect);
 				SDL_RenderCopy(renderer, texnobita, NULL, &nobitarect);
 				for (i = 0; i < enemies; i++) {
 					if (createenemy != 0) {
-						SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-						SDL_RenderFillRect(renderer, &examrect[i]);
+						//SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+						//SDL_RenderFillRect(renderer, &examrect[i]);
 						SDL_RenderCopy(renderer, texexam, NULL, &examrect[i]);
 					}
 				}
@@ -559,8 +559,8 @@ int main(int argc, char* argv[]) {
 					SDL_RenderCopy(renderer, texlifeoutboss, NULL, &lifeoutbossrect);
 					for (i = 0; i < futureenough2; i++) {
 						if (createenemy2[i] != 0) {
-							SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-							SDL_RenderFillRect(renderer, &chanclarect[i]);
+							//SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+							//SDL_RenderFillRect(renderer, &chanclarect[i]);
 							SDL_RenderCopy(renderer, texchancla, NULL, &chanclarect[i]);
 						}
 					}
@@ -568,8 +568,8 @@ int main(int argc, char* argv[]) {
 
 				if ((lifeboss > 0) && (life > 0)) {
 					if (createbullet > 0) {
-						SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-						SDL_RenderFillRect(renderer, &dorayakirect);
+						//SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+						//SDL_RenderFillRect(renderer, &dorayakirect);
 						SDL_RenderCopy(renderer, texdorayaki, NULL, &dorayakirect);
 					}
 
